@@ -51,6 +51,10 @@ Methods
 Changelog
 ---------
 
+### v0.1.1
+- Removes dependency on private jsonschema validator. Uses the public `jsonschema` package instead
+- Removed private label so the package can be published to npm
+
 ### v0.1.0
 - Adds support for body parsing using `co-body`
 
