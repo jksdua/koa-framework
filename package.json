@@ -1,0 +1,33 @@
+{
+  "name": "overlord",
+  "version": "0.1.1",
+  "description": "Simple HTTP framework for Koa",
+  "private": true,
+  "main": "index.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "mocha --harmony --bail --timeout 2000"
+  },
+  "author": "Jaap Karan Singh",
+  "license": "dont know yet",
+  "dependencies": {
+    "koa": "~0.5.1",
+    "lodash": "~2.4.1",
+    "koa-compress": "~1.0.3",
+    "koa-router": "~3.1.0",
+    "koa-error": "~1.1.1",
+    "koa-logger": "~1.2.0",
+    "koa-mount": "~1.2.3",
+    "co-monk": "0.0.1",
+    "monk": "~0.7.1",
+    "co-body": "0.0.1",
+    "jsonschema": "~0.4.0"
+  },
+  "devDependencies": {
+    "chai": "~1.9.0",
+    "request": "~2.34.0",
+    "mocha": "~1.17.1"
+  }
+}
