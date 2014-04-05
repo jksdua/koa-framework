@@ -1,5 +1,5 @@
-Overlord - Simple Koa Framework
-===============================
+Koa Framework
+=============
 
 Helper library for creating a basic Koa server. Adds basic middleware such as a router, request logger, compressor and json parser. Also includes helpers for interacting with a MongoDB database.
 
@@ -9,15 +9,15 @@ Usage
 ### Step 1 - Add the base koa server as a dependency
 
 ```javascript
-npm install overlord --save
+npm install koa-framework --save
 ```
 
 ### Step 2 - Create an app
 
 ```javascript
-var overlord = require('overlord');
+var koaFramework = require('koa-framework');
 
-var app = overlord.app()
+var app = koaFramework.app()
 	.createServer(3000, 'localhost')
 	.createDb('localhost/db_name')
 	.addApi('v1');
@@ -50,6 +50,9 @@ Methods
 
 Changelog
 ---------
+
+### v1.0.0
+- Changed name to `koa-framework`
 
 ### v0.1.1
 - Removes dependency on private jsonschema validator. Uses the public `jsonschema` package instead

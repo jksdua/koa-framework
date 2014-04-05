@@ -14,11 +14,11 @@ function port() {
 }
 
 describe('#app generator', function() {
-	var overlord = require(__dirname + '/../');
+	var koaFramework = require(__dirname + '/../');
 
 	describe('#webServer', function() {
 		it('should create a web server', function() {
-			var app = overlord.app().createServer(port()).done();
+			var app = koaFramework.app().createServer(port()).done();
 			should.exist(app.webapp);
 			should.exist(app.rawServer);
 		});
@@ -26,7 +26,7 @@ describe('#app generator', function() {
 
 	describe('#db', function() {
 		it('should create a db', function() {
-			var app = overlord.app().createDb('localhost/test');
+			var app = koaFramework.app().createDb('localhost/test');
 			should.exist(app.db);
 		});
 	});
@@ -34,19 +34,19 @@ describe('#app generator', function() {
 	describe('#assertions', function() {
 		it('should fail if proper configuration is not given', function() {
 			(function() {
-				overlord.app().createServer();
+				koaFramework.app().createServer();
 			}).should.throw();
 		});
 		it('should create a simple app', function() {
 			(function() {
-				var app = overlord.app();
+				var app = koaFramework.app();
 				should.not.exist(app.webapp);
 				should.not.exist(app.rawServer);
 				should.not.exist(app.db);
 			}).should.not.throw();
 		});
 		it('should creare the web server and the db', function() {
-			var app = overlord.app()
+			var app = koaFramework.app()
 									.createServer(port())
 									.createDb('localhost/test')
 									.done();
@@ -62,7 +62,7 @@ describe('#app generator', function() {
 		beforeEach(function() {
 			portNumber = port();
 			baseUrl = 'http://localhost:' + portNumber;
-			app = overlord.app()
+			app = koaFramework.app()
 							.createServer(portNumber)
 							.createDb('localhost/test');
 		});

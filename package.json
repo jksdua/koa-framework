@@ -1,6 +1,6 @@
 {
-  "name": "overlord",
-  "version": "0.1.1",
+  "name": "koa-framework",
+  "version": "1.0.0",
   "description": "Simple HTTP framework for Koa",
   "main": "index.js",
   "directories": {

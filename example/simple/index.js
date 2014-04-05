@@ -2,10 +2,10 @@
 
 'use strict';
 
-//var overlord = require('overlord');
-var overlord = require(__dirname + '/../..');
+//var koa-framework = require('koa-framework');
+var koaFramework = require(__dirname + '/../..');
 
-var app = overlord.app()
+var app = koaFramework.app()
 	.createServer(3000, 'localhost')
 	.createDb('localhost/development')
 	.addApi('v1');
