@@ -47,7 +47,6 @@ function validatorGenerator(schema) {
 	['body', 'query', 'params'].forEach(function(type) {
 		if (schema[type]) {
 			actualSchema.properties[type] = {
-				type: 'object',
 				required: schema.options.strict,
 				additionalProperties: !schema.options.strict, // if strict, dont allow additional properties
 				properties: schema[type]
