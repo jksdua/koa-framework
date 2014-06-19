@@ -139,6 +139,15 @@ describe('#app generator', function() {
 							}
 						});
 
+						app.api.v1.router.get('/param/:item', function *(next) {
+							this.body = 'Hello World';
+							yield next;
+						}, {
+							schema: {
+								params: { item: { type: 'string', required: true, enum: ['value'] } }
+							}
+						});
+
 						// call done once all our routes have been added
 						app.done();
 					});
@@ -164,6 +173,21 @@ describe('#app generator', function() {
 							res.statusCode.should.equal(200);
 							body.should.equal('Hello World');
 							done();
+						});
+					});
+
+					// param validation bug
+					it('should work for params schema', function(done) {
+						request(baseUrl + '/v1/param/abcd', function(err, res) {
+							should.not.exist(err);
+							res.statusCode.should.equal(400);
+
+							request(baseUrl + '/v1/param/value', function(err, res, body) {
+								should.not.exist(err);
+								res.statusCode.should.equal(200);
+								body.should.equal('Hello World');
+								done();
+							});
 						});
 					});
 				});
