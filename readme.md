@@ -51,6 +51,9 @@ Methods
 Changelog
 ---------
 
+### v1.0.2
+- Updated lower level dependencies - minor upgrades only
+
 ### v1.0.1
 - Fix `params` validation bug where its expecting an object but it's created as an array by `koa-router`
 
