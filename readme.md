@@ -1,5 +1,6 @@
-Koa Framework
+Koa Framework    [![NPM version][npm-image]][npm-url]
 =============
+
 
 Helper library for creating a basic Koa server. Adds basic middleware such as a router, request logger, compressor and json parser. Also includes helpers for interacting with a MongoDB database.
 
@@ -42,14 +43,12 @@ app.ready();
 ### Step 4 - View results in your browser
 Navigate to `http://localhost:3000/v1/users` to view a list of users.
 
-Methods
--------
-
-- TODO
-
 
 Changelog
 ---------
+
+### v1.1.0
+- Updated lower level dependencies
 
 ### v1.0.2
 - Updated lower level dependencies - minor upgrades only
@@ -69,3 +68,6 @@ Changelog
 
 ### v0.0.1
 - Initial release
+
+[npm-image]: https://img.shields.io/npm/v/koa-framework.svg?style=flat
+[npm-url]: https://npmjs.org/package/koa-framework

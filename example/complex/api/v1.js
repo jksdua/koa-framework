@@ -25,7 +25,7 @@ var modelHelpers = {
  */
 app.api.v1.router.get('/', function *() {
 	this.body = 'API  Version 1';
-});
+}); // jshint ignore:line
 
 app.api.v1.router.get('/users', function *() {
 	yield modelHelpers.clear;

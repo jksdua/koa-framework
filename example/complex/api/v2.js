@@ -32,7 +32,7 @@ var modelHelpers = {
  */
 app.api.v2.router.get('/', function *() {
 	this.body = 'API Version 2';
-});
+}); // jshint ignore:line
 app.api.v2.router.get('/users', function *() {
 	yield modelHelpers.clear;
 	yield modelHelpers.newItem('The Boss', 'bauss');
