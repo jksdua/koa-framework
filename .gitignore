@@ -1,2 +1,5 @@
 node_modules
-npm-debug.log
+desktop.ini
+.DS_Store
+*.out
+*.log
