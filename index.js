@@ -92,7 +92,7 @@ module.exports = function(options) {
 	app.use(middleware.parse(mOptions.parse));
 
 	// router
-	app.use(router(app));
+	app.router = router(app);
 
 	// schema validator
 	app.schema = middleware.schema(mOptions.schema);

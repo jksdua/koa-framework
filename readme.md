@@ -37,9 +37,19 @@ var app = koa();
 
 Request body is automatically parsed using [koa-body-parser](https://github.com/thomseddon/koa-body-parser). Both `json` and `form` encodings are supported.
 
+**Add router middleware (new in v2.1.0)**
+
+```js
+// custom middleware here
+
+// add router at the end after all your custom middleware
+app.use(app.router);
+```
+
+
 **Simple route**
 
-```javascript
+```js
 app.get('/test', function *() {
 	this.body = 'Wow! just like Express';
 });
@@ -79,7 +89,11 @@ app.listen();
 Changelog
 ---------
 
-### v2.0.0
+### v2.1.0 (30 Sep 2014)
+- **Breaking change**: Router is now exposed as `app.router`. This allows you to add your own middleware before the router middleware.
+- Changed dependency versions slightly so downstream packages can receive bugfixes
+
+### v2.0.0 (27 Sep 2014)
 - Initial release
 
 [npm-image]: https://img.shields.io/npm/v/koa-framework.svg?style=flat-square

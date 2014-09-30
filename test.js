@@ -19,6 +19,7 @@ describe('#koa-framework', function() {
 	it('should work with no options', function(done) {
 		var app = koa();
 		var p = port();
+		app.use(app.router);
 		app.listen(p);
 
 		request('http://localhost:' + p, function(err, res) {
@@ -33,6 +34,7 @@ describe('#koa-framework', function() {
 
 			var app = koa();
 			var p = port();
+			app.use(app.router);
 			app.post('/', function *() {
 				this.body = this.request.body;
 			}); // jshint ignore:line
@@ -63,6 +65,7 @@ describe('#koa-framework', function() {
 					}
 				}
 			});
+			app.use(app.router);
 			app.post('/', function *() {
 				this.body = this.request.body;
 			}); // jshint ignore:line
@@ -84,6 +87,7 @@ describe('#koa-framework', function() {
 		it('should throw an error if no schema is given', function() {
 			expect(function() {
 				var app = koa();
+				app.use(app.router);
 				app.post('/', app.schema(), function *() {
 					this.body = this.request.body;
 				}); // jshint ignore:line
@@ -97,6 +101,7 @@ describe('#koa-framework', function() {
 
 			var p = port();
 			var app = koa();
+			app.use(app.router);
 			app.get('/a/:a', app.schema(schema), function *() {
 				this.body = this.request.body;
 			}); // jshint ignore:line
@@ -117,6 +122,7 @@ describe('#koa-framework', function() {
 
 			var p = port();
 			var app = koa();
+			app.use(app.router);
 			app.get('/', app.schema(schema), function *() {
 				this.body = this.request.body;
 			}); // jshint ignore:line
@@ -138,6 +144,7 @@ describe('#koa-framework', function() {
 
 			var p = port();
 			var app = koa();
+			app.use(app.router);
 			app.post('/', app.schema(schema), function *() {
 				this.body = this.request.body;
 			}); // jshint ignore:line
@@ -166,6 +173,7 @@ describe('#koa-framework', function() {
 
 			var p = port();
 			var app = koa();
+			app.use(app.router);
 			app.post('/:a', app.schema(schema), function *() {
 				this.body = this.request.body;
 			}); // jshint ignore:line
