@@ -1,9 +1,16 @@
-Koa Framework 2    [![NPM version][npm-image]][npm-url]
+Koa Framework 3    [![NPM version][npm-image]][npm-url]
 ===============
 
 
 Helper library for creating a basic Koa server. Adds basic middleware such as a router, request parser and validator.
 
+
+Version 2.x
+-----------
+
+This version is mostly backwards compatible with version 2.x. The last 2.x release was v2.1.0. Version 3 changes the way route schemas are parsed.
+
+**[Documentation](https://gitlab.com/jksdua/koa-framework/blob/v2.1.0/readme.md "Version 2.1.0 documentation")**
 
 Version 1.x
 -----------
@@ -63,9 +70,21 @@ You may optionally add data validation to routes. Data is validated using jsonsc
 
 ```js
 var schema = {
-	params: { object: { type: 'string', required: true } }
-	query: { something: { type: 'string', required: false } },
-	body: { password: { type: 'string', required: true, minLength: 10 } }
+	params: {
+		properties: {
+			object: { type: 'string', required: true }
+		}
+	},
+	query: {
+		properties: {
+			something: { type: 'string', required: false } }
+		}
+	},
+	body: {
+		properties: {
+			password: { type: 'string', required: true, minLength: 10 }
+		}
+	}
 };
 app.post('/secret/:object', app.schema(schema), function *() {
 	var body = this.request.body;
@@ -89,12 +108,11 @@ app.listen();
 Changelog
 ---------
 
-### v2.1.0 (30 Sep 2014)
-- **Breaking change**: Router is now exposed as `app.router`. This allows you to add your own middleware before the router middleware.
-- Changed dependency versions slightly so downstream packages can receive bugfixes
-
-### v2.0.0 (27 Sep 2014)
+### v3.0.0 (27 Nov 2014)
+- **Breaking change**: Changed route schema parsing to allow more flexible schemas
+- Minor version bump of dependencies
 - Initial release
+
 
 [npm-image]: https://img.shields.io/npm/v/koa-framework.svg?style=flat-square
 [npm-url]: https://npmjs.org/package/koa-framework
