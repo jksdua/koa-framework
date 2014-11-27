@@ -27,19 +27,10 @@ var middleware = {
 				type: 'object',
 				required: true,
 				properties: {
-					body: {
-						type: 'object',
-						properties: schema.body
-					},
-					query: {
-						type: 'object',
-						properties: schema.query
-					},
-					params: {
-						// is an array with object properties
-						//type: 'object',
-						properties: schema.params
-					}
+					body: merge({ type: 'object' }, schema.body),
+					query: merge({ type: 'object' }, schema.query),
+					// is an array with object properties
+					params: merge({ /*type: 'object'*/ }, schema.params)
 				}
 			};
 			Object.keys(schema).forEach(function(prop) {

@@ -96,7 +96,11 @@ describe('#koa-framework', function() {
 
 		it('should throw an error if params do not match schema', function(done) {
 			var schema = {
-				params: { a: { type: 'number', required: true } }
+				params: {
+					properties: {
+						a: { type: 'number', required: true }
+					}
+				}
 			};
 
 			var p = port();
@@ -117,7 +121,11 @@ describe('#koa-framework', function() {
 
 		it('should throw an error if query does not match schema', function(done) {
 			var schema = {
-				query: { a: { type: 'string', required: true } }
+				query: {
+					properties: {
+						a: { type: 'string', required: true }
+					}
+				}
 			};
 
 			var p = port();
@@ -138,8 +146,16 @@ describe('#koa-framework', function() {
 
 		it('should throw an error if json body does not match schema', function(done) {
 			var schema = {
-				query: { a: { type: 'string', required: true } },
-				body: { a: { type: 'number', required: true } }
+				query: {
+					properties: {
+						a: { type: 'string', required: true }
+					}
+				},
+				body: {
+					properties: {
+						a: { type: 'number', required: true }
+					}
+				}
 			};
 
 			var p = port();
@@ -162,12 +178,22 @@ describe('#koa-framework', function() {
 
 		it('should return the errors if option is passed', function(done) {
 			var schema = {
-				params: { a: { type: 'string', required: true } },
-				query: { a: { type: 'string', required: true } },
+				params: {
+					properties: {
+						a: { type: 'string', required: true }
+					}
+				},
+				query: {
+					properties: {
+						a: { type: 'string', required: true }
+					}
+				},
 				body: {
-					a: { type: 'number', required: true },
-					b: { type: 'number', required: true },
-					c: { type: 'number', required: true }
+					properties: {
+						a: { type: 'number', required: true },
+						b: { type: 'number', required: true },
+						c: { type: 'number', required: true }
+					}
 				}
 			};
 
