@@ -108,6 +108,9 @@ app.listen();
 Changelog
 ---------
 
+### v3.2.0 (28 Nov 2014)
+- Added koa-error to support more error response types
+
 ### v3.1.0 (27 Nov 2014)
 - Default validator is wrapped in jsonschema-extra to support additional types and properties
 

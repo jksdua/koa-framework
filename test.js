@@ -28,6 +28,28 @@ describe('#koa-framework', function() {
 		});
 	});
 
+	describe('#error', function() {
+		it('should allow json errors', function(done) {
+			var app = koa();
+			var p = port();
+			app.use(app.router);
+			app.get('/', function *() {
+				this.throw(400, 'Some error');
+			}); // jshint ignore:line
+			app.listen(p);
+
+			request({
+				url: 'http://localhost:' + p,
+				method: 'GET',
+				json: true
+			}, function(err, res) {
+				expect(res.statusCode).to.equal(400);
+				expect(res.body).to.eql({ error: 'Some error' });
+				done();
+			});
+		});
+	});
+
 	describe('#parse', function() {
 		it('should parse json body', function(done) {
 			var body = { a: 'a', b: 'b' };

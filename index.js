@@ -14,6 +14,9 @@ var middleware = {
 	parse: function(opt) {
 		return opt.parser || require('koa-body-parser')(opt);
 	},
+	error: function(opt) {
+		return opt.handler || require('koa-error')(opt);
+	},
 	schema: function(opt) {
 		var displayErrors = opt.displayErrors;
 
@@ -74,6 +77,7 @@ module.exports = function(options) {
 	options = merge({
 		middleware: {
 			parse: { parser: null },
+			error: { handler: null },
 			schema: {
 				validator: null,
 				// only return data validation errors in dev environment
@@ -83,6 +87,9 @@ module.exports = function(options) {
 		}
 	}, options);
 	var mOptions = options.middleware;
+
+	// error handler
+	app.use(middleware.error(mOptions.error));
 
 	// body parser
 	app.use(middleware.parse(mOptions.parse));
