@@ -15,8 +15,13 @@ var middleware = {
 		return opt.parser || require('koa-body-parser')(opt);
 	},
 	schema: function(opt) {
-		var validator = opt.validator || new (require('jsonschema').Validator)();
 		var displayErrors = opt.displayErrors;
+
+		var validator = opt.validator;
+		if (!validator) {
+			validator = new (require('jsonschema').Validator)();
+			require('jsonschema-extra')(validator);
+		}
 
 		return function(schema, opt) {
 			opt = merge({ strict: true }, opt);

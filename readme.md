@@ -108,6 +108,9 @@ app.listen();
 Changelog
 ---------
 
+### v3.1.0 (27 Nov 2014)
+- Default validator is wrapped in jsonschema-extra to support additional types and properties
+
 ### v3.0.0 (27 Nov 2014)
 - **Breaking change**: Changed route schema parsing to allow more flexible schemas
 - Minor version bump of dependencies
