@@ -72,7 +72,6 @@ var middleware = {
 
 module.exports = function(options) {
 	var app = koa();
-	app.poweredBy = false;
 
 	options = merge({
 		middleware: {

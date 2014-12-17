@@ -108,6 +108,10 @@ app.listen();
 Changelog
 ---------
 
+### v3.3.0 (17 Dec 2014)
+- Bumped koa to 0.14.0
+- Removed app.poweredBy directive since it is no longer enabled by default
+
 ### v3.2.0 (28 Nov 2014)
 - Added koa-error to support more error response types
 
