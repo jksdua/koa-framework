@@ -5,20 +5,6 @@ Koa Framework 3    [![NPM version][npm-image]][npm-url]
 Helper library for creating a basic Koa server. Adds basic middleware such as a router, request parser and validator.
 
 
-Version 2.x
------------
-
-This version is mostly backwards compatible with version 2.x. The last 2.x release was v2.1.0. Version 3 changes the way route schemas are parsed.
-
-**[Documentation](https://gitlab.com/jksdua/koa-framework/blob/v2.1.0/readme.md "Version 2.1.0 documentation")**
-
-Version 1.x
------------
-
-This version is not backwards compatible with version 1.x. The last 1.x release was v1.1.0. Version 2 is slightly smaller. It no longer supports API versioning by default and no longer bundles mongodb database helpers. Compression and error handling plugins has also been removed.
-
-**[Documentation](https://gitlab.com/jksdua/koa-framework/blob/v1.1.0/readme.md "Version 1.1.0 documentation")**
-
 
 Usage
 -----
@@ -105,8 +91,27 @@ app.listen();
 ```
 
 
+Version 2.x
+-----------
+
+This version is mostly backwards compatible with version 2.x. The last 2.x release was v2.1.0. Version 3 changes the way route schemas are parsed.
+
+**[Documentation](https://gitlab.com/jksdua/koa-framework/blob/v2.1.0/readme.md "Version 2.1.0 documentation")**
+
+Version 1.x
+-----------
+
+This version is not backwards compatible with version 1.x. The last 1.x release was v1.1.0. Version 2 is slightly smaller. It no longer supports API versioning by default and no longer bundles mongodb database helpers. Compression and error handling plugins has also been removed.
+
+**[Documentation](https://gitlab.com/jksdua/koa-framework/blob/v1.1.0/readme.md "Version 1.1.0 documentation")**
+
+
+
 Changelog
 ---------
+
+### v3.4.0 (3 Feb 2015)
+- Updated dependencies
 
 ### v3.3.0 (17 Dec 2014)
 - Bumped koa to 0.14.0
