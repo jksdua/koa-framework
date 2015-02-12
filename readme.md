@@ -110,6 +110,11 @@ This version is not backwards compatible with version 1.x. The last 1.x release 
 Changelog
 ---------
 
+### v3.4.1 (13 Feb 2015)
+- Fixed bug where `opt.strict` overrides `additionalProperties`.
+- Additionally, `opt` argument in `app.schema` has been deprecated as all its functionality can be provided with the passed schema. It just adds additional complexity.
+	- Instead of setting `opt.strict` to `true`, simply pass `additionalProperties` to `false`.
+
 ### v3.4.0 (3 Feb 2015)
 - Updated dependencies
 

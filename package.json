@@ -1,6 +1,6 @@
 {
   "name": "koa-framework",
-  "version": "3.4.0",
+  "version": "3.4.1",
   "description": "Simple framework around Koa",
   "main": "index.js",
   "scripts": {

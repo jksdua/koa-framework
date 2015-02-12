@@ -236,5 +236,35 @@ describe('#koa-framework', function() {
 				done();
 			});
 		});
+
+		it('should override strict option if additionalProperties exists in schema', function(done) {
+			console.warn('[deprecated] remove once deprecated code is removed');
+
+			var schema = {
+				query: {
+					properties: {
+						a: { type: 'string', required: true }
+					},
+					additionalProperties: true
+				}
+			};
+
+			var p = port();
+			var app = koa();
+			app.use(app.router);
+			app.post('/', app.schema(schema), function *() {
+				this.body = this.query;
+			}); // jshint ignore:line
+			app.listen(p);
+
+			request({
+				url: 'http://localhost:' + p + '?a=a&b=b&c=c',
+				method: 'POST'
+			}, function(err, res) {
+				// should not throw validation error
+				expect(res.statusCode).to.equal(200);
+				done();
+			});
+		});
 	});
 });

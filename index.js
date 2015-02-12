@@ -26,27 +26,45 @@ var middleware = {
 			require('jsonschema-extra')(validator);
 		}
 
+		// opt is now deprecated, no longer required
 		return function(schema, opt) {
+			if (opt) {
+				console.warn('[deprecated] options are deprecated. The only supported option is `strict` which can be individually toggled using `additionalProperties`');
+			}
+
 			opt = merge({ strict: true }, opt);
 
 			assert(schema && (schema.body || schema.query || schema.params), 'Missing/invalid schema');
 
+			var baseSchema = {
+				type: 'object',
+				required: true,
+				additionalProperties: false
+			};
+
+			// apply opt.strict
+			if (!opt.strict) {
+				baseSchema.additionalProperties = true;
+			}
+
 			var toBeUsed = {
 				type: 'object',
 				required: true,
-				properties: {
-					body: merge({ type: 'object' }, schema.body),
-					query: merge({ type: 'object' }, schema.query),
-					// is an array with object properties
-					params: merge({ /*type: 'object'*/ }, schema.params)
-				}
+				properties: {}
 			};
-			Object.keys(schema).forEach(function(prop) {
-				merge(toBeUsed.properties[prop], {
-					required: true,
-					additionalProperties: opt.strict ? false : true
-				});
-			});
+
+			if (schema.body) {
+				toBeUsed.properties.body = merge({}, baseSchema, schema.body);
+			}
+
+			if (schema.query) {
+				toBeUsed.properties.query = merge({}, baseSchema, schema.query);
+			}
+
+			// is an array with object properties
+			if (schema.params) {
+				toBeUsed.properties.params = merge({}, baseSchema, { type: 'array' }, schema.params);
+			}
 
 			return function *(next) {
 				var res = validator.validate({
