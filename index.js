@@ -3,6 +3,7 @@
 'use strict';
 
 const DEFAULT_ERROR_ENVS = ['development', 'dev', 'test', 'testing'];
+const INVALID_PARAMS_ERROR_MSG = 'Invalid request parameters';
 
 var assert = require('assert');
 
@@ -71,14 +72,23 @@ var middleware = {
 					body: this.request.body,
 					query: this.query,
 					params: this.params
-				}, toBeUsed);
+				}, toBeUsed, {
+					propertyName: 'request'
+				});
 
 				if (!res.valid) {
-					if (displayErrors) {
+					if (this.accepts('json')) {
+						this.status = 400;
 						this.type = 'json';
-						this.throw(400, JSON.stringify(res.errors));
+						this.body = {
+							error: INVALID_PARAMS_ERROR_MSG,
+							validationErrors: displayErrors ? res.errors : null
+						};
+
+						this.body.error = INVALID_PARAMS_ERROR_MSG;
 					} else {
-						this.throw(400);
+						let errorMsg = INVALID_PARAMS_ERROR_MSG + ' - ' + JSON.stringify(res.errors);
+						this.throw(400, errorMsg);
 					}
 				} else {
 					yield next;

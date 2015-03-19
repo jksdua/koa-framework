@@ -83,6 +83,20 @@ app.post('/secret/:object', app.schema(schema), function *() {
 });
 ```
 
+The server returns the following response body on schema validation error. The `validationErrors` property is the `errors` property returned by `jsonschema` on validation.
+
+```json
+{
+	"error": "Invalid request parameters",
+	"validationErrors": [{
+		"property": "request.body",
+		"message": "Property password is required",
+		"schema": { ... },
+		"instance": ...
+	}]
+}
+```
+
 
 ### Step 3 - Kick off the server
 
@@ -109,6 +123,11 @@ This version is not backwards compatible with version 1.x. The last 1.x release 
 
 Changelog
 ---------
+
+### v3.5.0 (19 Mar 2015)
+- Changed how schema errors are handled
+	- The server now sends `res.error` and `res.validationErrors` in the response body
+- Added branding assets
 
 ### v3.4.1 (13 Feb 2015)
 - Fixed bug where `opt.strict` overrides `additionalProperties`.

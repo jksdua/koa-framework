@@ -160,6 +160,7 @@ describe('#koa-framework', function() {
 
 			request({
 				url: 'http://localhost:' + p + '?b=123&c=456',
+				json: true
 			}, function(err, res) {
 				expect(res.statusCode).to.equal(400);
 				done();
@@ -198,23 +199,11 @@ describe('#koa-framework', function() {
 			});
 		});
 
-		it('should return the errors if option is passed', function(done) {
+		it('should return the errors for a json request', function(done) {
 			var schema = {
-				params: {
-					properties: {
-						a: { type: 'string', required: true }
-					}
-				},
 				query: {
 					properties: {
 						a: { type: 'string', required: true }
-					}
-				},
-				body: {
-					properties: {
-						a: { type: 'number', required: true },
-						b: { type: 'number', required: true },
-						c: { type: 'number', required: true }
 					}
 				}
 			};
@@ -222,17 +211,80 @@ describe('#koa-framework', function() {
 			var p = port();
 			var app = koa();
 			app.use(app.router);
-			app.post('/:a', app.schema(schema), function *() {
+			app.get('/', app.schema(schema), function *() {
 				this.body = this.request.body;
 			}); // jshint ignore:line
 			app.listen(p);
 
 			request({
-				url: 'http://localhost:' + p + '/a/?a=a',
-				method: 'POST',
-				json: { a: 0, b: 123, c: 456 }
+				url: 'http://localhost:' + p + '?b=123&c=456',
+				json: true
 			}, function(err, res) {
-				expect(res.statusCode).to.equal(200);
+				expect(res.statusCode).to.equal(400);
+				expect(res.body.error).to.match(/invalid\srequest/i);
+				expect(res.body.validationErrors).to.be.an('array');
+				done();
+			});
+		});
+
+		it('should return the errors for a html request', function(done) {
+			var schema = {
+				query: {
+					properties: {
+						a: { type: 'string', required: true }
+					}
+				}
+			};
+
+			var p = port();
+			var app = koa();
+			app.use(app.router);
+			app.get('/', app.schema(schema), function *() {
+				this.body = this.request.body;
+			}); // jshint ignore:line
+			app.listen(p);
+
+			request({
+				url: 'http://localhost:' + p + '?b=123&c=456',
+				headers: { Accept: 'text/html' }
+			}, function(err, res) {
+				expect(res.statusCode).to.equal(400);
+				expect(res.body).to.match(/invalid\srequest/i);
+				// soft checking validation errors were passed in the html
+				expect(res.body).to.match(/request\.query/i);
+				done();
+			});
+		});
+
+		it('should not return errors if displayErrors is off', function(done) {
+			var schema = {
+				query: {
+					properties: {
+						a: { type: 'string', required: true }
+					}
+				}
+			};
+
+			var p = port();
+			var app = koa({
+				middleware: {
+					schema: { displayErrors: false }
+				}
+			});
+			app.use(app.router);
+			app.get('/', app.schema(schema), function *() {
+				this.body = this.request.body;
+			}); // jshint ignore:line
+			app.listen(p);
+
+			request({
+				url: 'http://localhost:' + p + '?b=123&c=456',
+				json: true
+			}, function(err, res) {
+				expect(res.statusCode).to.equal(400);
+				expect(res.body.error).to.match(/invalid\srequest/i);
+				// soft checking validation errors were passed in the html
+				expect(res.body.validationErrors).to.equal(null);
 				done();
 			});
 		});
