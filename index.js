@@ -111,6 +111,10 @@ module.exports = function(options) {
 				displayErrors: DEFAULT_ERROR_ENVS.indexOf(app.env) > -1 ? true : false
 			},
 			security: {}
+		},
+		// options passed to koa-router when creating a router
+		router: {
+			throw: true
 		}
 	}, options);
 	var mOptions = options.middleware;
@@ -121,8 +125,19 @@ module.exports = function(options) {
 	// body parser
 	app.use(middleware.parse(mOptions.parse));
 
-	// router
-	app.router = router(app);
+	app.router = function(routerOpts) {
+		routerOpts = merge({}, options.router, routerOpts);
+		return new router(routerOpts);
+	};
+	app.Router = app.router;
+
+	app.mount = function() {
+		for (var i = 0, len = arguments.length; i < len; i += 1) {
+			var router = arguments[i];
+			app.use(router.routes());
+			app.use(router.allowedMethods());
+		}
+	};
 
 	// schema validator
 	app.schema = middleware.schema(mOptions.schema);

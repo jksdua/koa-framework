@@ -1,10 +1,11 @@
 {
   "name": "koa-framework",
-  "version": "3.5.0",
-  "description": "Simple framework around Koa",
+  "version": "4.0.0",
+  "description": "Dead simple framework on top of koa",
   "main": "index.js",
   "scripts": {
     "test": "mocha --bail --harmony --reporter spec test.js",
+    "test-watch": "nodemon --exec \"npm test\"",
     "validate": "rm -rf ./node_modules && npm cache clear && npm install"
   },
   "directories": {
@@ -12,7 +13,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://gitlab.com/jksdua/koa-framework"
+    "url": "https://github.com/jksdua/koa-framework"
   },
   "engines": {
     "node": ">=0.11.9"

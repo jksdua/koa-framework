@@ -2,6 +2,8 @@
 
 'use strict';
 
+process.env.NODE_ENV = 'test';
+
 describe('#koa-framework', function() {
 	var chai = require('chai');
 	var expect = chai.expect;
@@ -19,7 +21,9 @@ describe('#koa-framework', function() {
 	it('should work with no options', function(done) {
 		var app = koa();
 		var p = port();
-		app.use(app.router);
+		var router = app.router();
+
+		app.mount(router);
 		app.listen(p);
 
 		request('http://localhost:' + p, function(err, res) {
@@ -32,10 +36,13 @@ describe('#koa-framework', function() {
 		it('should allow json errors', function(done) {
 			var app = koa();
 			var p = port();
-			app.use(app.router);
-			app.get('/', function *() {
+
+			var router = app.router();
+			router.get('/', function *() {
 				this.throw(400, 'Some error');
 			}); // jshint ignore:line
+
+			app.mount(router);
 			app.listen(p);
 
 			request({
@@ -56,10 +63,13 @@ describe('#koa-framework', function() {
 
 			var app = koa();
 			var p = port();
-			app.use(app.router);
-			app.post('/', function *() {
+
+			var router = app.router();
+			router.post('/', function *() {
 				this.body = this.request.body;
 			}); // jshint ignore:line
+
+			app.mount(router);
 			app.listen(p);
 
 			request({
@@ -87,10 +97,13 @@ describe('#koa-framework', function() {
 					}
 				}
 			});
-			app.use(app.router);
-			app.post('/', function *() {
+
+			var router = app.router();
+			router.post('/', function *() {
 				this.body = this.request.body;
 			}); // jshint ignore:line
+
+			app.mount(router);
 			app.listen(p);
 
 			request({
@@ -103,14 +116,54 @@ describe('#koa-framework', function() {
 				done();
 			});
 		});
+
+		it('should support multiple routers', function(done) {
+			var body = { a: 'a', b: 'b' };
+
+			var app = koa();
+			var p = port();
+
+			var routerA = app.router({ prefix: '/a' });
+			var routerB = app.router({ prefix: '/b' });
+			routerA.post('/z', function *() {
+				this.body = this.request.body;
+			}); // jshint ignore:line
+			routerB.post('/z', function *() {
+				this.body = this.request.body;
+			}); // jshint ignore:line
+
+			app.mount(routerA);
+			app.mount(routerB);
+			app.listen(p);
+
+			request({
+				url: 'http://localhost:' + p + '/a/z',
+				method: 'POST',
+				json: body
+			}, function(err, res) {
+				expect(res.statusCode).to.equal(200);
+				expect(res.body).to.eql(body);
+
+				request({
+					url: 'http://localhost:' + p + '/b/z',
+					method: 'POST',
+					json: body
+				}, function(err, res) {
+					expect(res.statusCode).to.equal(200);
+					expect(res.body).to.eql(body);
+					done();
+				});
+			});
+		});
 	});
 
 	describe('#schema', function() {
 		it('should throw an error if no schema is given', function() {
 			expect(function() {
 				var app = koa();
-				app.use(app.router);
-				app.post('/', app.schema(), function *() {
+
+				var router = app.router();
+				router.post('/', app.schema(), function *() {
 					this.body = this.request.body;
 				}); // jshint ignore:line
 			}).to.throw(/schema/i);
@@ -127,10 +180,13 @@ describe('#koa-framework', function() {
 
 			var p = port();
 			var app = koa();
-			app.use(app.router);
-			app.get('/a/:a', app.schema(schema), function *() {
+
+			var router = app.router();
+			router.get('/a/:a', app.schema(schema), function *() {
 				this.body = this.request.body;
 			}); // jshint ignore:line
+
+			app.mount(router);
 			app.listen(p);
 
 			request({
@@ -152,10 +208,13 @@ describe('#koa-framework', function() {
 
 			var p = port();
 			var app = koa();
-			app.use(app.router);
-			app.get('/', app.schema(schema), function *() {
+
+			var router = app.router();
+			router.get('/', app.schema(schema), function *() {
 				this.body = this.request.body;
 			}); // jshint ignore:line
+
+			app.mount(router);
 			app.listen(p);
 
 			request({
@@ -183,10 +242,13 @@ describe('#koa-framework', function() {
 
 			var p = port();
 			var app = koa();
-			app.use(app.router);
-			app.post('/', app.schema(schema), function *() {
+
+			var router = app.router();
+			router.post('/', app.schema(schema), function *() {
 				this.body = this.request.body;
 			}); // jshint ignore:line
+
+			app.mount(router);
 			app.listen(p);
 
 			request({
@@ -210,10 +272,13 @@ describe('#koa-framework', function() {
 
 			var p = port();
 			var app = koa();
-			app.use(app.router);
-			app.get('/', app.schema(schema), function *() {
+
+			var router = app.router();
+			router.get('/', app.schema(schema), function *() {
 				this.body = this.request.body;
 			}); // jshint ignore:line
+
+			app.mount(router);
 			app.listen(p);
 
 			request({
@@ -236,12 +301,17 @@ describe('#koa-framework', function() {
 				}
 			};
 
+			process.env.NODE_ENV = 'development';
+
 			var p = port();
 			var app = koa();
-			app.use(app.router);
-			app.get('/', app.schema(schema), function *() {
+
+			var router = app.router();
+			router.get('/', app.schema(schema), function *() {
 				this.body = this.request.body;
 			}); // jshint ignore:line
+
+			app.mount(router);
 			app.listen(p);
 
 			request({
@@ -252,6 +322,8 @@ describe('#koa-framework', function() {
 				expect(res.body).to.match(/invalid\srequest/i);
 				// soft checking validation errors were passed in the html
 				expect(res.body).to.match(/request\.query/i);
+
+				process.env.NODE_ENV = 'test';
 				done();
 			});
 		});
@@ -271,10 +343,13 @@ describe('#koa-framework', function() {
 					schema: { displayErrors: false }
 				}
 			});
-			app.use(app.router);
-			app.get('/', app.schema(schema), function *() {
+
+			var router = app.router();
+			router.get('/', app.schema(schema), function *() {
 				this.body = this.request.body;
 			}); // jshint ignore:line
+
+			app.mount(router);
 			app.listen(p);
 
 			request({
@@ -303,10 +378,13 @@ describe('#koa-framework', function() {
 
 			var p = port();
 			var app = koa();
-			app.use(app.router);
-			app.post('/', app.schema(schema), function *() {
+
+			var router = app.router();
+			router.post('/', app.schema(schema), function *() {
 				this.body = this.query;
 			}); // jshint ignore:line
+
+			app.mount(router);
 			app.listen(p);
 
 			request({
@@ -316,6 +394,59 @@ describe('#koa-framework', function() {
 				// should not throw validation error
 				expect(res.statusCode).to.equal(200);
 				done();
+			});
+		});
+	});
+
+	describe('#router', function() {
+		it('should support mounting multiple routers', function(done) {
+			var app = koa();
+			var p = port();
+
+			// private routes
+			var paymentsRouter = app.router({
+				prefix: '/payments'
+			});
+
+			// middleware for /payments/*
+			paymentsRouter.use(function *() {
+				this.throw(401);
+			}); // jshint ignore:line
+
+			// POST /payments/transfer
+			paymentsRouter.post('/transfer', function *() {
+				this.body = { money: 200 };
+			}); // jshint ignore:line
+
+			// public routes
+			var sharedRouter = app.router({
+				prefix: '/shared'
+			});
+
+			// GET /shared/lolcat
+			sharedRouter.get('/lolcat', function *() {
+				this.body = { lol: 'cat' };
+			}); // jshint ignore:line
+
+			app.mount(paymentsRouter, sharedRouter);
+
+			app.listen(p);
+
+			request({
+				url: 'http://localhost:' + p + '/payments/transfer',
+				method: 'POST'
+			}, function(err, res) {
+				expect(res.statusCode).to.equal(401);
+
+				request({
+					url: 'http://localhost:' + p + '/shared/lolcat',
+					method: 'GET',
+					json: true
+				}, function(err, res) {
+					expect(res.statusCode).to.equal(200);
+					expect(res.body).to.eql({ lol: 'cat' });
+					done();
+				});
 			});
 		});
 	});

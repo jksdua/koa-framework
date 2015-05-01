@@ -1,9 +1,29 @@
-Koa Framework 3    [![NPM version][npm-image]][npm-url]
-===============
+koa-framework
+=============
+
+Dead simple framework on top of koa
 
 
-Helper library for creating a basic Koa server. Adds basic middleware such as a router, request parser and validator.
+[![NPM version][npm-image]][npm-url]
+[![build status][travis-image]][travis-url]
+[![David deps][david-image]][david-url]
 
+[![node version][node-image]][node-url]
+[![io version][io-image]][node-url]
+
+[npm-image]: https://img.shields.io/npm/v/koa-framework.svg?style=flat-square
+[npm-url]: https://npmjs.org/package/koa-framework
+[travis-image]: https://img.shields.io/travis/jksdua/koa-framework.svg?style=flat-square
+[travis-url]: https://travis-ci.org/jksdua/koa-framework
+[david-image]: https://img.shields.io/david/jksdua/koa-framework.svg?style=flat-square
+[david-url]: https://david-dm.org/jksdua/koa-framework
+[node-image]: https://img.shields.io/badge/node.js-%3E=_0.11.9-green.svg?style=flat-square
+[node-url]: http://nodejs.org
+[io-image]: https://img.shields.io/badge/io.js-%3E=_1.0-yellow.svg?style=flat-square
+[io-url]: https://iojs.org
+
+
+Koa frmaework is a basic bootstrap library for creating a Koa server. It provides a router constructor with basic middleware such as a request parser and validator.
 
 
 Usage
@@ -20,42 +40,40 @@ npm install koa-framework --save
 A koa instance is returned so see [koa documentation](koajs.com) for more details.
 
 ```javascript
-var koa = require('koa-framework');
+let koa = require('koa-framework');
 
 // koa server instance
-var app = koa();
+let app = koa();
 ```
 
 ### Step 2 - Add some app logic
 
 Request body is automatically parsed using [koa-body-parser](https://github.com/thomseddon/koa-body-parser). Both `json` and `form` encodings are supported.
 
-**Add router middleware (new in v2.1.0)**
+#### Create router instance
+
+See [koa-router](https://github.com/alexmingoia/koa-router) documentation for detailed documentation.
 
 ```js
-// custom middleware here
+let router = app.router();
 
-// add router at the end after all your custom middleware
-app.use(app.router);
-```
-
-
-**Simple route**
-
-```js
-app.get('/test', function *() {
+router.get('/test', function *() {
 	this.body = 'Wow! just like Express';
 });
+
+// mount router
+app.mount(router);
 ```
+
 
 **Data validation**
 
-You may optionally add data validation to routes. Data is validated using jsonschema. If data does not pass validation, the server returns a `400 Bad Request` error. In non production environments, the response body is populated with the validation errors.
+One of the key aspects of a web application is data validation. `koa-framework` supports request data validation using jsonschema. If data does not pass validation, the server returns a `400 Bad Request` error. In non production environments, the response body is populated with the validation errors.
 
 > Note: Values in `this.params` and `this.body` (when using form encoding) are not coerced to their correct data types. They are always strings.
 
 ```js
-var schema = {
+let schema = {
 	params: {
 		properties: {
 			object: { type: 'string', required: true }
@@ -72,8 +90,8 @@ var schema = {
 		}
 	}
 };
-app.post('/secret/:object', app.schema(schema), function *() {
-	var body = this.request.body;
+router.post('/secret/:object', app.schema(schema), function *() {
+	let body = this.request.body;
 
 	if (body.password === 'the best password ever') {
 		this.body = 'You got it boss';
@@ -98,6 +116,37 @@ The server returns the following response body on schema validation error. The `
 ```
 
 
+**Namespaced routes and middleware**
+
+```js
+// private routes
+let paymentsRouter = app.router({
+	prefix: '/payments'
+});
+
+// middleware for /payments/*
+paymentsRouter.use(ensureAuthenticated);
+
+// POST /payments/transfer
+paymentsRouter.post('/transfer', handleTransfer);
+
+
+// public routes
+let sharedRouter = app.router({
+	prefix: '/shared'
+});
+
+// GET /shared/lolcat
+sharedRouter.get('/lolcat', getLolcat);
+
+app.mount(paymentsRouter, sharedRouter);
+
+// alternatively
+app.mount(paymentsRouter);
+app.mount(sharedRouter);
+```
+
+
 ### Step 3 - Kick off the server
 
 ```javascript
@@ -105,53 +154,5 @@ app.listen();
 ```
 
 
-Version 2.x
------------
-
-This version is mostly backwards compatible with version 2.x. The last 2.x release was v2.1.0. Version 3 changes the way route schemas are parsed.
-
-**[Documentation](https://gitlab.com/jksdua/koa-framework/blob/v2.1.0/readme.md "Version 2.1.0 documentation")**
-
-Version 1.x
------------
-
-This version is not backwards compatible with version 1.x. The last 1.x release was v1.1.0. Version 2 is slightly smaller. It no longer supports API versioning by default and no longer bundles mongodb database helpers. Compression and error handling plugins has also been removed.
-
-**[Documentation](https://gitlab.com/jksdua/koa-framework/blob/v1.1.0/readme.md "Version 1.1.0 documentation")**
-
-
-
-Changelog
----------
-
-### v3.5.0 (19 Mar 2015)
-- Changed how schema errors are handled
-	- The server now sends `res.error` and `res.validationErrors` in the response body
-- Added branding assets
-
-### v3.4.1 (13 Feb 2015)
-- Fixed bug where `opt.strict` overrides `additionalProperties`.
-- Additionally, `opt` argument in `app.schema` has been deprecated as all its functionality can be provided with the passed schema. It just adds additional complexity.
-	- Instead of setting `opt.strict` to `true`, simply pass `additionalProperties` to `false`.
-
-### v3.4.0 (3 Feb 2015)
-- Updated dependencies
-
-### v3.3.0 (17 Dec 2014)
-- Bumped koa to 0.14.0
-- Removed app.poweredBy directive since it is no longer enabled by default
-
-### v3.2.0 (28 Nov 2014)
-- Added koa-error to support more error response types
-
-### v3.1.0 (27 Nov 2014)
-- Default validator is wrapped in jsonschema-extra to support additional types and properties
-
-### v3.0.0 (27 Nov 2014)
-- **Breaking change**: Changed route schema parsing to allow more flexible schemas
-- Minor version bump of dependencies
-- Initial release
-
-
-[npm-image]: https://img.shields.io/npm/v/koa-framework.svg?style=flat-square
-[npm-url]: https://npmjs.org/package/koa-framework
+[Changelog](./history.md)
+-------------------------
