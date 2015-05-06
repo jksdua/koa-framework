@@ -2,6 +2,7 @@
 
 'use strict';
 
+const KF_VERSION = require('./package.json').version;
 const DEFAULT_ERROR_ENVS = ['development', 'dev', 'test', 'testing'];
 const INVALID_PARAMS_ERROR_MSG = 'Invalid request parameters';
 
@@ -95,22 +96,32 @@ var middleware = {
 				}
 			};
 		};
+	},
+	requestId: function(opt) {
+		return require('koa-x-request-id')(opt.key, opt.noHyphen, opt.inject);
 	}
 };
 
 module.exports = function(options) {
 	var app = koa();
 
+	app.KF_VERSION = KF_VERSION;
+
 	options = merge({
 		middleware: {
-			parse: { parser: null },
-			error: { handler: null },
+			parse: { parser: null, enabled: true },
+			error: { handler: null, enabled: true },
 			schema: {
 				validator: null,
 				// only return data validation errors in dev environment
 				displayErrors: DEFAULT_ERROR_ENVS.indexOf(app.env) > -1 ? true : false
 			},
-			security: {}
+			requestId: {
+				key: 'X-Request-Id',
+				noHyphen: false,
+				inject: true,
+				enabled: true
+			}
 		},
 		// options passed to koa-router when creating a router
 		router: {
@@ -119,11 +130,20 @@ module.exports = function(options) {
 	}, options);
 	var mOptions = options.middleware;
 
+	// request id
+	if (mOptions.requestId.enabled) {
+		app.use(middleware.requestId(mOptions.requestId));
+	}
+
 	// error handler
-	app.use(middleware.error(mOptions.error));
+	if (mOptions.error.enabled) {
+		app.use(middleware.error(mOptions.error));
+	}
 
 	// body parser
-	app.use(middleware.parse(mOptions.parse));
+	if (mOptions.parse.enabled) {
+		app.use(middleware.parse(mOptions.parse));
+	}
 
 	app.router = function(routerOpts) {
 		routerOpts = merge({}, options.router, routerOpts);

@@ -32,6 +32,36 @@ describe('#koa-framework', function() {
 		});
 	});
 
+	it('should expose the koa-framework version', function() {
+		var app = koa();
+		expect(app.KF_VERSION).to.be.a('string');
+	});
+
+	describe('#requestId', function() {
+		it('should add request id in context and response headers', function(done) {
+			var app = koa();
+			var p = port();
+
+			var router = app.router();
+			router.get('/', function *() {
+				expect(this.id).to.be.a('string');
+				expect(this.request.id).to.be.a('string');
+			}); // jshint ignore:line
+
+			app.mount(router);
+			app.listen(p);
+
+			request({
+				url: 'http://localhost:' + p,
+				method: 'GET',
+				json: true
+			}, function(err, res) {
+				expect(res.headers['x-request-id']).to.be.a('string');
+				done();
+			});
+		});
+	});
+
 	describe('#error', function() {
 		it('should allow json errors', function(done) {
 			var app = koa();

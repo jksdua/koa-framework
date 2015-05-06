@@ -154,5 +154,24 @@ app.listen();
 ```
 
 
+## Bundled middleware
+
+`koa-framework` comes bundled with [koa-body-parser](https://npmjs.com/package/koa-parser), [koa-error](https://npmjs.com/package/koa-error) and [koa-x-request-id](https://npmjs.com/package/koa-x-request-id)
+
+### Configuration
+
+Middlewares are completely configurable with options being passed to the downstream middleware as is. Optionally, individual middlewares can also be turned off completely. An example is shown below:
+
+```js
+var app = koa({
+	middleware: {
+		error: { enabled: false },
+		parse: { jsonLimit: '512kb' },
+		requestId: { key: 'x-request-id'. inject: false }
+	}
+});
+```
+
+
 [Changelog](./history.md)
 -------------------------

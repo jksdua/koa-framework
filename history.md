@@ -1,5 +1,13 @@
 # Changelog
 
+## 4.1.0
+6 May 2015
+
+- Added `koa-x-request-id` middleware for adding request ids to distinguish between requests and for supporting logging
+- Added ability to disable middleware if needed
+- Added `app.KF_VERSION` to return the `koa-framework` version
+
+
 ## 4.0.0
 2 May 2015
 
