@@ -12,7 +12,7 @@ node_js:
   - "iojs-v1.6"
   - "iojs-v1.7"
   - "iojs-v1.8"
-  - "iojs-v1.8"
+  - "iojs-v2.0"
 os:
   - linux
   - osx
