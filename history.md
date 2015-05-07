@@ -1,5 +1,12 @@
 # Changelog
 
+## 4.1.1
+7 May 2015
+
+- Added io.js v2.0.x to CI build
+- Fixed bug in request id middleware
+  - It was implemented incorrectly but tests were passing
+
 ## 4.1.0
 6 May 2015
 
