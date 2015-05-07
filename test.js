@@ -43,9 +43,15 @@ describe('#koa-framework', function() {
 			var p = port();
 
 			var router = app.router();
+			router.use(function *(next) {
+				expect(this.id).to.be.a('string');
+				expect(this.request.id).to.be.a('string');
+				yield next;
+			});
 			router.get('/', function *() {
 				expect(this.id).to.be.a('string');
 				expect(this.request.id).to.be.a('string');
+				this.body = null;
 			}); // jshint ignore:line
 
 			app.mount(router);
@@ -56,6 +62,7 @@ describe('#koa-framework', function() {
 				method: 'GET',
 				json: true
 			}, function(err, res) {
+				expect(res.statusCode).to.equal(204);
 				expect(res.headers['x-request-id']).to.be.a('string');
 				done();
 			});

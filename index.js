@@ -97,8 +97,8 @@ var middleware = {
 			};
 		};
 	},
-	requestId: function(opt) {
-		return require('koa-x-request-id')(opt.key, opt.noHyphen, opt.inject);
+	requestId: function(opt, app) {
+		return require('koa-x-request-id')(app, opt);
 	}
 };
 
@@ -132,17 +132,17 @@ module.exports = function(options) {
 
 	// request id
 	if (mOptions.requestId.enabled) {
-		app.use(middleware.requestId(mOptions.requestId));
+		app.use(middleware.requestId(mOptions.requestId, app));
 	}
 
 	// error handler
 	if (mOptions.error.enabled) {
-		app.use(middleware.error(mOptions.error));
+		app.use(middleware.error(mOptions.error, app));
 	}
 
 	// body parser
 	if (mOptions.parse.enabled) {
-		app.use(middleware.parse(mOptions.parse));
+		app.use(middleware.parse(mOptions.parse, app));
 	}
 
 	app.router = function(routerOpts) {
