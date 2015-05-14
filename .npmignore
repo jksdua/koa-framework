@@ -1,2 +1,6 @@
 branding/
 test.js
+.jshint*
+.travis.yml
+.validate.json
+*.md
