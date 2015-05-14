@@ -1,5 +1,11 @@
 # Changelog
 
+## 4.1.2
+14 May 2015
+
+- Fixed params schema bug
+  - `koa-router` no longer treats `params` as an array
+
 ## 4.1.1
 7 May 2015
 

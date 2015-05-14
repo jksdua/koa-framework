@@ -65,7 +65,7 @@ var middleware = {
 
 			// is an array with object properties
 			if (schema.params) {
-				toBeUsed.properties.params = merge({}, baseSchema, { type: 'array' }, schema.params);
+				toBeUsed.properties.params = merge({}, baseSchema, schema.params);
 			}
 
 			return function *(next) {

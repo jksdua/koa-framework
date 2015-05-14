@@ -210,7 +210,7 @@ describe('#koa-framework', function() {
 			var schema = {
 				params: {
 					properties: {
-						a: { type: 'number', required: true }
+						a: { type: 'string', required: true, enum: ['a', 'b', 'c'] }
 					}
 				}
 			};
@@ -227,9 +227,13 @@ describe('#koa-framework', function() {
 			app.listen(p);
 
 			request({
-				url: 'http://localhost:' + p + '/a/a',
+				url: 'http://localhost:' + p + '/a/d',
+				json: true
 			}, function(err, res) {
 				expect(res.statusCode).to.equal(400);
+				expect(res.body.error).to.match(/invalid\srequest\sparameters/i);
+				expect(res.body.validationErrors).to.have.length(1);
+				expect(res.body.validationErrors[0]).to.have.property('stack', 'request.params.a is not one of enum values: a,b,c');
 				done();
 			});
 		});
