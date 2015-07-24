@@ -56,7 +56,6 @@ var middleware = {
 			require('jsonschema-extra')(validator);
 		}
 
-		// opt is now deprecated, no longer required
 		return function(schema, opt) {
 			opt = merge({ strict: true }, globalOpt, opt);
 
