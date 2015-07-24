@@ -31,7 +31,6 @@
     "jsonschema-extra": "^1.0.2",
     "koa": "^0.21.0",
     "koa-body-parser": "~1.1.0",
-    "koa-error": "~1.1.2",
     "koa-router": "^5.0.1",
     "koa-x-request-id": "^1.1.0",
     "lodash.merge": "^3.3.1",

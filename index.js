@@ -47,7 +47,7 @@ var middleware = {
 		return opt.parser || require('koa-body-parser')(opt);
 	},
 	error: function(opt) {
-		return opt.handler || require('koa-error')(opt);
+		return opt.handler || require('./error');
 	},
 	schema: function(globalOpt) {
 		var validator = globalOpt.validator;
