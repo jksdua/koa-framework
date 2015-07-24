@@ -70,7 +70,7 @@ app.mount(router);
 
 One of the key aspects of a web application is data validation. `koa-framework` supports request data validation using jsonschema. If data does not pass validation, the server returns a `400 Bad Request` error. In non production environments, the response body is populated with the validation errors.
 
-> Note: Values in `this.params` and `this.body` (when using form encoding) are not coerced to their correct data types. They are always strings.
+> Note: Values in `this.params` and `this.body` (when using form encoding) are not coerced to their correct data types. They are always strings. **This has changed since v4.2.0. You can now turn on type coercion by setting option `coerceTypes` to `true` when calling `app.schema()`**
 
 ```js
 let schema = {

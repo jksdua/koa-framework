@@ -437,6 +437,172 @@ describe('#koa-framework', function() {
 				done();
 			});
 		});
+
+		it('should work for an integer type', function(done) {
+			var schema = {
+				query: {
+					properties: {
+						a: { type: 'integer', required: true }
+					}
+				}
+			};
+
+			var p = port();
+			var app = koa();
+
+			var router = app.router();
+			router.post('/', app.schema(schema, { coerceTypes: true }), function *() {
+				this.body = this.query;
+			}); // jshint ignore:line
+
+			app.mount(router);
+			app.listen(p);
+
+			request({
+				url: 'http://localhost:' + p + '?a=123',
+				method: 'POST',
+				json: true
+			}, function(err, res) {
+				// should not throw validation error
+				expect(res.statusCode).to.equal(200);
+				expect(res.body.a).to.equal(123);
+				done();
+			});
+		});
+
+		it('should work for a number type', function(done) {
+			var schema = {
+				query: {
+					properties: {
+						a: { type: 'number', required: true }
+					}
+				}
+			};
+
+			var p = port();
+			var app = koa();
+
+			var router = app.router();
+			router.post('/', app.schema(schema, { coerceTypes: true }), function *() {
+				this.body = this.query;
+			}); // jshint ignore:line
+
+			app.mount(router);
+			app.listen(p);
+
+			request({
+				url: 'http://localhost:' + p + '?a=123.45',
+				method: 'POST',
+				json: true
+			}, function(err, res) {
+				// should not throw validation error
+				expect(res.statusCode).to.equal(200);
+				expect(res.body.a).to.equal(123.45);
+				done();
+			});
+		});
+
+		it('should work for a boolean type', function(done) {
+			var schema = {
+				params: {
+					properties: {
+						a: { type: 'boolean', required: true },
+						b: { type: 'boolean', required: true }
+					}
+				}
+			};
+
+			var p = port();
+			var app = koa();
+
+			var router = app.router();
+			router.post('/a/:a/b/:b', app.schema(schema, { coerceTypes: true }), function *() {
+				this.body = this.params;
+			}); // jshint ignore:line
+
+			app.mount(router);
+			app.listen(p);
+
+			request({
+				url: 'http://localhost:' + p + '/a/true/b/false',
+				method: 'POST',
+				json: true
+			}, function(err, res) {
+				// should not throw validation error
+				expect(res.statusCode).to.equal(200);
+				expect(res.body.a).to.equal(true);
+				expect(res.body.b).to.equal(false);
+				done();
+			});
+		});
+
+		it('should work for an integer type if enabled globally', function(done) {
+			var schema = {
+				query: {
+					properties: {
+						a: { type: 'integer', required: true }
+					}
+				}
+			};
+
+			var p = port();
+			var app = koa({
+				middleware: {
+					schema: {
+						coerceTypes: true
+					}
+				}
+			});
+
+			var router = app.router();
+			router.post('/', app.schema(schema), function *() {
+				this.body = this.query;
+			}); // jshint ignore:line
+
+			app.mount(router);
+			app.listen(p);
+
+			request({
+				url: 'http://localhost:' + p + '?a=123',
+				method: 'POST',
+				json: true
+			}, function(err, res) {
+				// should not throw validation error
+				expect(res.statusCode).to.equal(200);
+				done();
+			});
+		});
+
+		it('should not work for an integer type if not enabled', function(done) {
+			var schema = {
+				query: {
+					properties: {
+						a: { type: 'integer', required: true }
+					}
+				}
+			};
+
+			var p = port();
+			var app = koa();
+
+			var router = app.router();
+			router.post('/', app.schema(schema), function *() {
+				this.body = this.query;
+			}); // jshint ignore:line
+
+			app.mount(router);
+			app.listen(p);
+
+			request({
+				url: 'http://localhost:' + p + '?a=123',
+				method: 'POST',
+				json: true
+			}, function(err, res) {
+				// should not throw validation error
+				expect(res.statusCode).to.equal(400);
+				done();
+			});
+		});
 	});
 
 	describe('#router', function() {

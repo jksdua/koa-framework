@@ -1,5 +1,11 @@
 # Changelog
 
+## 4.2.0
+25 July 2015
+
+- Added `coerceTypes` option for schema middleware which coerces parameters to the same type as the schema
+  - Defaults to `false`. This will default to `true` in the next major release
+
 ## 4.1.2
 14 May 2015
 

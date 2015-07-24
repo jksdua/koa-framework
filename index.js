@@ -12,6 +12,36 @@ var koa = require('koa');
 var merge = require('lodash.merge');
 var router = require('koa-router');
 
+var convertTo = {
+	integer: function(n) {
+		return parseInt(n, 10);
+	},
+	number: function(n) {
+		return parseFloat(n, 10);
+	},
+	boolean: function(b) {
+		return 'true' === b;
+	}
+};
+
+function convertOne(item, schema) {
+	if (schema.type && convertTo[schema.type]) {
+		return convertTo[schema.type](item);
+	} else if (schema.properties) {
+		for (var i in schema.properties) {
+			if (item[i]) {
+				item[i] = convertOne(item[i], schema.properties[i]);
+			}
+		}
+	}
+	return item;
+}
+
+function convertStringToType(ctx, schema) {
+	ctx.query = convertOne(ctx.query, schema.query || {});
+	ctx.params = convertOne(ctx.params, schema.params || {});
+}
+
 var middleware = {
 	parse: function(opt) {
 		return opt.parser || require('koa-body-parser')(opt);
@@ -19,10 +49,8 @@ var middleware = {
 	error: function(opt) {
 		return opt.handler || require('koa-error')(opt);
 	},
-	schema: function(opt) {
-		var displayErrors = opt.displayErrors;
-
-		var validator = opt.validator;
+	schema: function(globalOpt) {
+		var validator = globalOpt.validator;
 		if (!validator) {
 			validator = new (require('jsonschema').Validator)();
 			require('jsonschema-extra')(validator);
@@ -30,11 +58,15 @@ var middleware = {
 
 		// opt is now deprecated, no longer required
 		return function(schema, opt) {
-			if (opt) {
-				console.warn('[deprecated] options are deprecated. The only supported option is `strict` which can be individually toggled using `additionalProperties`');
-			}
+			opt = merge({ strict: true }, globalOpt, opt);
 
-			opt = merge({ strict: true }, opt);
+			var displayErrors = opt.displayErrors;
+			var coerceTypes = opt.coerceTypes;
+			var strict = opt.strict;
+
+			if (!coerceTypes) {
+				console.warn('coerceTypes will default to true in the next major release');
+			}
 
 			assert(schema && (schema.body || schema.query || schema.params), 'Missing/invalid schema');
 
@@ -45,7 +77,7 @@ var middleware = {
 			};
 
 			// apply opt.strict
-			if (!opt.strict) {
+			if (!strict) {
 				baseSchema.additionalProperties = true;
 			}
 
@@ -69,6 +101,10 @@ var middleware = {
 			}
 
 			return function *(next) {
+				if (coerceTypes) {
+					convertStringToType(this, schema);
+				}
+
 				var res = validator.validate({
 					body: this.request.body,
 					query: this.query,
@@ -114,7 +150,8 @@ module.exports = function(options) {
 			schema: {
 				validator: null,
 				// only return data validation errors in dev environment
-				displayErrors: DEFAULT_ERROR_ENVS.indexOf(app.env) > -1 ? true : false
+				displayErrors: DEFAULT_ERROR_ENVS.indexOf(app.env) > -1 ? true : false,
+				coerceTypes: false
 			},
 			requestId: {
 				key: 'X-Request-Id',

@@ -1,12 +1,13 @@
 {
   "name": "koa-framework",
-  "version": "4.1.2",
+  "version": "4.2.0",
   "description": "Dead simple framework on top of koa",
   "main": "index.js",
   "scripts": {
     "test": "mocha --bail --harmony --reporter spec test.js",
     "test-watch": "nodemon --exec \"npm test\"",
-    "validate": "rm -rf ./node_modules && npm cache clear && npm install"
+    "validate": "rm -rf ./node_modules && npm cache clear && npm install",
+    "lint": "jshint ."
   },
   "directories": {
     "test": "test"
@@ -33,7 +34,8 @@
     "koa-error": "~1.1.2",
     "koa-router": "^5.0.1",
     "koa-x-request-id": "^1.1.0",
-    "lodash.merge": "^3.3.1"
+    "lodash.merge": "^3.3.1",
+    "traverse": "^0.6.6"
   },
   "devDependencies": {
     "chai": "*",
@@ -41,5 +43,10 @@
     "mocha": "^2.2.5",
     "precommit-hook": "*",
     "request": "*"
-  }
+  },
+  "pre-commit": [
+    "lint",
+    "validate",
+    "test"
+  ]
 }
