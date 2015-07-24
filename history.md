@@ -1,5 +1,16 @@
 # Changelog
 
+## 5.0.0
+25 July 2015
+
+- **[BREAKING CHANGE]** Enable `coerceTypes` by default
+- **[BREAKING CHANGE]** Removed `koa-error`, replaced with in-house implementation
+  - Only supports **json** now
+- **[BREAKING CHANGE]** Pass option `allowUnknownAttributes` to schema validator when `strict` option is true
+- **[NEW FEATURE]** Allow passing a function to schema middleware
+  - Useful for running conditional middleware dependent on some request parameter 
+- **[BUGFIX]** Schema errors will now emit an `error` just like any other error
+
 ## 4.2.0
 25 July 2015
 
