@@ -128,7 +128,8 @@ var middleware = {
 					query: this.query,
 					params: this.params
 				}, getSchema(this), {
-					propertyName: 'request'
+					propertyName: 'request',
+					allowUnknownAttributes: !strict
 				});
 
 				if (!res.valid) {

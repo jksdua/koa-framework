@@ -406,8 +406,6 @@ describe('#koa-framework', function() {
 		});
 
 		it('should override strict option if additionalProperties exists in schema', function(done) {
-			console.warn('[deprecated] remove once deprecated code is removed');
-
 			var schema = {
 				query: {
 					properties: {
@@ -641,6 +639,39 @@ describe('#koa-framework', function() {
 			}, function(err, res) {
 				// should not throw validation error
 				expect(res.statusCode).to.equal(200);
+				done();
+			});
+		});
+
+		it('should not support unknown attributes by default', function(done) {
+			var schema = {
+				query: {
+					properties: {
+						a: { type: 'string', required: true }
+					},
+					bla: 'bla'
+				}
+			};
+
+			var p = port();
+			var app = koa();
+
+			var router = app.router();
+			router.post('/', app.schema(schema), function *() {
+				this.body = this.query;
+			}); // jshint ignore:line
+
+			app.mount(router);
+			app.listen(p);
+
+			request({
+				url: 'http://localhost:' + p + '?a=a',
+				method: 'POST',
+				json: true
+			}, function(err, res) {
+				// should throw an error
+				expect(res.statusCode).to.equal(500);
+
 				done();
 			});
 		});
