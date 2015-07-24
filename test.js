@@ -232,8 +232,8 @@ describe('#koa-framework', function() {
 			}, function(err, res) {
 				expect(res.statusCode).to.equal(400);
 				expect(res.body.error).to.match(/invalid\srequest\sparameters/i);
-				expect(res.body.validationErrors).to.have.length(1);
-				expect(res.body.validationErrors[0]).to.have.property('stack', 'request.params.a is not one of enum values: a,b,c');
+				expect(res.body.details.validationErrors).to.have.length(1);
+				expect(res.body.details.validationErrors[0]).to.have.property('stack', 'request.params.a is not one of enum values: a,b,c');
 				done();
 			});
 		});
@@ -328,7 +328,7 @@ describe('#koa-framework', function() {
 			}, function(err, res) {
 				expect(res.statusCode).to.equal(400);
 				expect(res.body.error).to.match(/invalid\srequest/i);
-				expect(res.body.validationErrors).to.be.an('array');
+				expect(res.body.details.validationErrors).to.be.an('array');
 				done();
 			});
 		});
@@ -400,7 +400,7 @@ describe('#koa-framework', function() {
 				expect(res.statusCode).to.equal(400);
 				expect(res.body.error).to.match(/invalid\srequest/i);
 				// soft checking validation errors were passed in the html
-				expect(res.body.validationErrors).to.equal(null);
+				expect(res.body.details.validationErrors).to.equal(null);
 				done();
 			});
 		});

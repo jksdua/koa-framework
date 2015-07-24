@@ -114,19 +114,10 @@ var middleware = {
 				});
 
 				if (!res.valid) {
-					if (this.accepts('json')) {
-						this.status = 400;
-						this.type = 'json';
-						this.body = {
-							error: INVALID_PARAMS_ERROR_MSG,
-							validationErrors: displayErrors ? res.errors : null
-						};
-
-						this.body.error = INVALID_PARAMS_ERROR_MSG;
-					} else {
-						let errorMsg = INVALID_PARAMS_ERROR_MSG + ' - ' + JSON.stringify(res.errors);
-						this.throw(400, errorMsg);
-					}
+					var error = new Error(INVALID_PARAMS_ERROR_MSG);
+					error.status = 400;
+					error.details = { validationErrors: displayErrors ? res.errors : null };
+					this.throw(error);
 				} else {
 					yield next;
 				}
