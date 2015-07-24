@@ -584,7 +584,7 @@ describe('#koa-framework', function() {
 			var app = koa();
 
 			var router = app.router();
-			router.post('/', app.schema(schema), function *() {
+			router.post('/', app.schema(schema, { coerceTypes: false }), function *() {
 				this.body = this.query;
 			}); // jshint ignore:line
 

@@ -161,7 +161,7 @@ module.exports = function(options) {
 				validator: null,
 				// only return data validation errors in dev environment
 				displayErrors: DEFAULT_ERROR_ENVS.indexOf(app.env) > -1 ? true : false,
-				coerceTypes: false
+				coerceTypes: true
 			},
 			requestId: {
 				key: 'X-Request-Id',
