@@ -63,11 +63,13 @@ var middleware = {
 			var coerceTypes = opt.coerceTypes;
 			var strict = opt.strict;
 
+			var fnSchema = ('function' === typeof schema);
+			var objSchema = ('object' === typeof schema);
+			var parsedSchema;
+
 			if (!coerceTypes) {
 				console.warn('coerceTypes will default to true in the next major release');
 			}
-
-			assert(schema && (schema.body || schema.query || schema.params), 'Missing/invalid schema');
 
 			var baseSchema = {
 				type: 'object',
@@ -80,23 +82,40 @@ var middleware = {
 				baseSchema.additionalProperties = true;
 			}
 
-			var toBeUsed = {
-				type: 'object',
-				required: true,
-				properties: {}
-			};
+			function parseSchema(schema) {
+				var toBeUsed = {
+					type: 'object',
+					required: true,
+					properties: {}
+				};
 
-			if (schema.body) {
-				toBeUsed.properties.body = merge({}, baseSchema, schema.body);
+				if (schema.body) {
+					toBeUsed.properties.body = merge({}, baseSchema, schema.body);
+				}
+
+				if (schema.query) {
+					toBeUsed.properties.query = merge({}, baseSchema, schema.query);
+				}
+
+				// is an array with object properties
+				if (schema.params) {
+					toBeUsed.properties.params = merge({}, baseSchema, schema.params);
+				}
+
+				return toBeUsed;
 			}
 
-			if (schema.query) {
-				toBeUsed.properties.query = merge({}, baseSchema, schema.query);
+			assert(objSchema || fnSchema, 'Missing/invalid schema');
+			if (objSchema) {
+				assert(schema && (schema.body || schema.query || schema.params), 'Missing/invalid schema');
 			}
-
-			// is an array with object properties
-			if (schema.params) {
-				toBeUsed.properties.params = merge({}, baseSchema, schema.params);
+			function getSchema(ctx) {
+				if (objSchema) {
+					parsedSchema = parsedSchema || parseSchema(schema);
+					return parsedSchema;
+				} else if (fnSchema) {
+					return parseSchema(schema.call(ctx, ctx));
+				}
 			}
 
 			return function *(next) {
@@ -108,7 +127,7 @@ var middleware = {
 					body: this.request.body,
 					query: this.query,
 					params: this.params
-				}, toBeUsed, {
+				}, getSchema(this), {
 					propertyName: 'request'
 				});
 

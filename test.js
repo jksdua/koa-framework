@@ -603,6 +603,47 @@ describe('#koa-framework', function() {
 				done();
 			});
 		});
+
+		it('should support function schema', function(done) {
+			var schema1 = {
+				query: {
+					properties: {
+						a: { type: 'integer', required: true }
+					}
+				}
+			};
+
+			var schema2 = {
+				query: {
+					properties: {
+						a: { type: 'string', required: true }
+					}
+				}
+			};
+
+			var p = port();
+			var app = koa();
+
+			var router = app.router();
+			router.post('/', app.schema(function() {
+				return schema2;
+			}), function *() {
+				this.body = this.query;
+			}); // jshint ignore:line
+
+			app.mount(router);
+			app.listen(p);
+
+			request({
+				url: 'http://localhost:' + p + '?a=a',
+				method: 'POST',
+				json: true
+			}, function(err, res) {
+				// should not throw validation error
+				expect(res.statusCode).to.equal(200);
+				done();
+			});
+		});
 	});
 
 	describe('#router', function() {
