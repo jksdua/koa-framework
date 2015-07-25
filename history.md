@@ -1,5 +1,10 @@
 # Changelog
 
+## 5.0.1
+25 July 2015
+
+- Removed `traverse` dependency
+
 ## 5.0.0
 25 July 2015
 

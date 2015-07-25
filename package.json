@@ -1,6 +1,6 @@
 {
   "name": "koa-framework",
-  "version": "5.0.0",
+  "version": "5.0.1",
   "description": "Dead simple framework on top of koa",
   "main": "index.js",
   "scripts": {
@@ -33,8 +33,7 @@
     "koa-body-parser": "~1.1.0",
     "koa-router": "^5.0.1",
     "koa-x-request-id": "^1.1.0",
-    "lodash.merge": "^3.3.1",
-    "traverse": "^0.6.6"
+    "lodash.merge": "^3.3.1"
   },
   "devDependencies": {
     "chai": "*",
