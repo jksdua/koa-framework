@@ -194,6 +194,46 @@ describe('#koa-framework', function() {
 		});
 	});
 
+	describe('#no-cache', function() {
+		it('should be disabled by default', function(done) {
+			var app = koa();
+			var p = port();
+
+			app.use(function *() {
+				this.status = 201;
+			}); // jshint ignore:line
+
+			app.listen(p);
+
+			request('http://localhost:' + p, function(err, res) {
+				expect(res.statusCode).to.equal(201);
+				expect(res.headers).to.not.have.property('cache-control');
+				done();
+			});
+		});
+
+		it('should set no cache headers if enabled', function(done) {
+			var app = koa({
+				middleware: {
+					noCache: { enabled: true, global: true }
+				}
+			});
+			var p = port();
+
+			app.use(function *() {
+				this.status = 201;
+			}); // jshint ignore:line
+
+			app.listen(p);
+
+			request('http://localhost:' + p, function(err, res) {
+				expect(res.statusCode).to.equal(201);
+				expect(res.headers).to.have.property('cache-control', 'no-store, no-cache, must-revalidate');
+				done();
+			});
+		});
+	});
+
 	describe('#schema', function() {
 		it('should throw an error if no schema is given', function() {
 			expect(function() {

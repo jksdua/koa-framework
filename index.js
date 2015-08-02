@@ -52,6 +52,9 @@ var middleware = {
 	logger: function(opt) {
 		return opt.logger || require('koa-json-logger')(opt);
 	},
+	noCache: function(opt) {
+		return require('koa-no-cache')(opt);
+	},
 	schema: function(globalOpt) {
 		var validator = globalOpt.validator;
 		if (!validator) {
@@ -161,6 +164,7 @@ module.exports = function(options) {
 			parse: { parser: null, enabled: true },
 			error: { handler: null, enabled: true },
 			logger: { logger: null, enabled: true },
+			noCache: { global: false, enabled: false },
 			schema: {
 				validator: null,
 				// only return data validation errors in dev environment
@@ -181,7 +185,7 @@ module.exports = function(options) {
 	}, options);
 	var mOptions = options.middleware;
 
-	['requestId', 'logger', 'error', 'parse'].forEach(function(i) {
+	['requestId', 'logger', 'error', 'noCache', 'parse'].forEach(function(i) {
 		if (mOptions[i].enabled) {
 			app.use(middleware[i](mOptions[i], app));
 		}
