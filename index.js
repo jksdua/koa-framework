@@ -49,6 +49,9 @@ var middleware = {
 	error: function(opt) {
 		return opt.handler || require('./error');
 	},
+	logger: function(opt) {
+		return opt.logger || require('koa-json-logger')(opt);
+	},
 	schema: function(globalOpt) {
 		var validator = globalOpt.validator;
 		if (!validator) {
@@ -157,6 +160,7 @@ module.exports = function(options) {
 		middleware: {
 			parse: { parser: null, enabled: true },
 			error: { handler: null, enabled: true },
+			logger: { logger: null, enabled: true },
 			schema: {
 				validator: null,
 				// only return data validation errors in dev environment
@@ -180,6 +184,11 @@ module.exports = function(options) {
 	// request id
 	if (mOptions.requestId.enabled) {
 		app.use(middleware.requestId(mOptions.requestId, app));
+	}
+
+	// logger
+	if (mOptions.logger.enabled) {
+		app.use(middleware.logger(mOptions.logger, app));
 	}
 
 	// error handler

@@ -3,3 +3,5 @@ desktop.ini
 .DS_Store
 *.out
 *.log
+
+log/*
