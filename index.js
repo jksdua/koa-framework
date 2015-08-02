@@ -43,6 +43,9 @@ function convertStringToType(ctx, schema) {
 }
 
 var middleware = {
+	requestId: function(opt, app) {
+		return require('koa-x-request-id')(app, opt);
+	},
 	parse: function(opt) {
 		return opt.parser || require('koa-body-parser')(opt);
 	},
@@ -54,6 +57,41 @@ var middleware = {
 	},
 	noCache: function(opt) {
 		return require('koa-no-cache')(opt);
+	},
+	vitalsigns: function(opt, app) {
+		if (!opt.vitals) {
+			var Vitalsigns = require('vitalsigns');
+			var vitals = opt.vitals = new Vitalsigns();
+
+			// simple monitors
+			vitals.monitor('cpu');
+			vitals.monitor('mem', { units: 'MB' });
+			vitals.monitor('tick');
+			vitals.monitor('uptime');
+
+			// { cpu: {...}, mem: {...} }
+			for (var monitor in opt.unhealthyWhen) {
+				var monitorOptions = opt.unhealthyWhen[monitor];
+				// { usage: { greaterThan: ... } }
+				for (var key in monitorOptions) {
+					// { greatherThan: 100 }
+					var singleItem = monitorOptions[key];
+					for (var i in singleItem) {
+						vitals.unhealthyWhen(monitor, key)[i](singleItem[i]);
+					}
+				}
+			}
+		}
+
+		var vitalsignsKoa = require('vitalsigns-koa');
+		var router = app.router({
+			prefix: opt.path
+		});
+		router.all('/', vitalsignsKoa(opt.vitals, {
+			secret: opt.secret,
+			public: opt.public
+		}));
+		app.mount(router);
 	},
 	schema: function(globalOpt) {
 		var validator = globalOpt.validator;
@@ -148,9 +186,6 @@ var middleware = {
 				}
 			};
 		};
-	},
-	requestId: function(opt, app) {
-		return require('koa-x-request-id')(app, opt);
 	}
 };
 
@@ -165,6 +200,19 @@ module.exports = function(options) {
 			error: { handler: null, enabled: true },
 			logger: { logger: null, enabled: true },
 			noCache: { global: false, enabled: false },
+			vitalsigns: {
+				// will be enabled by default in next major release
+				enabled: false,
+				// path options
+				path: '/health',
+				secret: null,
+				// health options
+				unhealthyWhen: {
+					cpu: { usage: { greaterThan: 80 } },
+					tick: { maxMs: { greaterThan: 500 } },
+					mem: {}
+				}
+			},
 			schema: {
 				validator: null,
 				// only return data validation errors in dev environment
@@ -204,6 +252,13 @@ module.exports = function(options) {
 			app.use(router.allowedMethods());
 		}
 	};
+
+	// health route
+	if (mOptions.vitalsigns.enabled) {
+		middleware.vitalsigns(mOptions.vitalsigns, app);
+	} else {
+		console.warn('vitalsigns middleware disabled. It will be enabled by default in next major release');
+	}
 
 	// schema validator
 	app.schema = middleware.schema(mOptions.schema);

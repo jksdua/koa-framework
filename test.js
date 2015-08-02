@@ -234,6 +234,60 @@ describe('#koa-framework', function() {
 		});
 	});
 
+	describe('#vitalsigns', function() {
+		it('should not return vitalsigns by default', function(done) {
+			var app = koa();
+			var p = port();
+			app.listen(p);
+
+			request('http://localhost:' + p + '/health', function(err, res) {
+				expect(res.statusCode).to.equal(404);
+				done();
+			});
+		});
+
+		it('should return all properties by default when enabled', function(done) {
+			var app = koa({
+				middleware: {
+					vitalsigns: { enabled: true }
+				}
+			});
+			var p = port();
+			app.listen(p);
+
+			request({
+				url: 'http://localhost:' + p + '/health',
+				json: true
+			}, function(err, res) {
+				['cpu', 'mem', 'tick', 'healthy'].forEach(function(property) {
+					expect(res.body).to.contain.property(property);
+				});
+				done();
+			});
+		});
+
+		it('should return public properties if secret is given', function(done) {
+			var app = koa({
+				middleware: {
+					vitalsigns: { enabled: true, secret: 'secret' }
+				}
+			});
+			var p = port();
+			app.listen(p);
+
+			request({
+				url: 'http://localhost:' + p + '/health',
+				json: true
+			}, function(err, res) {
+				expect(res.body).to.contain.property('healthy');
+				['cpu', 'mem', 'tick'].forEach(function(property) {
+					expect(res.body).to.not.contain.property(property);
+				});
+				done();
+			});
+		});
+	});
+
 	describe('#schema', function() {
 		it('should throw an error if no schema is given', function() {
 			expect(function() {
