@@ -1,5 +1,16 @@
 # Changelog
 
+## 5.1.0
+2 August 2015
+
+- Added `koa-vitalsigns` middleware
+  - If enabled, exposed on `/health` by default with no `secret`.
+  - Disabled by default. Will be enabled by default in the next major release.
+- Added `koa-no-cache` middleware
+  - Disabled by default.
+- Added `koa-json-logger` middleware
+  - Disabled by default. Will be enabled by default in the next major release.
+
 ## 5.0.1
 25 July 2015
 
@@ -13,7 +24,7 @@
   - Only supports **json** now
 - **[BREAKING CHANGE]** Pass option `allowUnknownAttributes` to schema validator when `strict` option is true
 - **[NEW FEATURE]** Allow passing a function to schema middleware
-  - Useful for running conditional middleware dependent on some request parameter 
+  - Useful for running conditional middleware dependent on some request parameter
 - **[BUGFIX]** Schema errors will now emit an `error` just like any other error
 
 ## 4.2.0
