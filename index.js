@@ -181,25 +181,11 @@ module.exports = function(options) {
 	}, options);
 	var mOptions = options.middleware;
 
-	// request id
-	if (mOptions.requestId.enabled) {
-		app.use(middleware.requestId(mOptions.requestId, app));
-	}
-
-	// logger
-	if (mOptions.logger.enabled) {
-		app.use(middleware.logger(mOptions.logger, app));
-	}
-
-	// error handler
-	if (mOptions.error.enabled) {
-		app.use(middleware.error(mOptions.error, app));
-	}
-
-	// body parser
-	if (mOptions.parse.enabled) {
-		app.use(middleware.parse(mOptions.parse, app));
-	}
+	['requestId', 'logger', 'error', 'parse'].forEach(function(i) {
+		if (mOptions[i].enabled) {
+			app.use(middleware[i](mOptions[i], app));
+		}
+	});
 
 	app.router = function(routerOpts) {
 		routerOpts = merge({}, options.router, routerOpts);
