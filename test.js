@@ -234,6 +234,53 @@ describe('#koa-framework', function() {
 		});
 	});
 
+	describe('#gzip', function() {
+		it('should be disabled by default', function(done) {
+			var app = koa();
+			var p = port();
+
+			app.use(function *() {
+				this.status = 201;
+			}); // jshint ignore:line
+
+			app.listen(p);
+
+			request('http://localhost:' + p, function(err, res) {
+				expect(res.statusCode).to.equal(201);
+				expect(res.headers['content-encoding']).to.not.match(/gzip/);
+				done();
+			});
+		});
+
+		it('should set gzip encoding if enabled', function(done) {
+			var app = koa({
+				middleware: {
+					gzip: { enabled: true }
+				}
+			});
+			var p = port();
+
+			app.use(function *() {
+				this.body = {};
+				// set a big enough body that gzip would be done
+				for (var i = 0, len = 1500; i < len; i += 1) {
+					this.body[i] = 'somerandomstring';
+				}
+			}); // jshint ignore:line
+
+			app.listen(p);
+
+			request({
+				url: 'http://localhost:' + p,
+				gzip: true
+			}, function(err, res) {
+				expect(res.statusCode).to.equal(200);
+				expect(res.headers['content-encoding']).to.match(/gzip/);
+				done();
+			});
+		});
+	});
+
 	describe('#vitalsigns', function() {
 		it('should not return vitalsigns by default', function(done) {
 			var app = koa();

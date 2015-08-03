@@ -15,6 +15,8 @@ var middleware = {
 	error: require('./middleware/error'),
 	logger: require('./middleware/logger'),
 	noCache: require('./middleware/no-cache'),
+	gzip: require('./middleware/gzip'),
+	helmet: require('./middleware/helmet'),
 	vitalsigns: require('./middleware/vitalsigns'),
 	schema: require('./middleware/schema')
 };
@@ -37,7 +39,7 @@ module.exports = function(options) {
 	}, options);
 	var mOptions = options.middleware;
 
-	['requestId', 'logger', 'error', 'noCache', 'parse'].forEach(function(i) {
+	['requestId', 'gzip', 'logger', 'error', 'noCache', 'parse'].forEach(function(i) {
 		if (mOptions[i].enabled) {
 			app.use(middleware[i](mOptions[i], app));
 		}
@@ -56,6 +58,13 @@ module.exports = function(options) {
 			app.use(router.allowedMethods());
 		}
 	};
+
+	// helmet (security)
+	if (mOptions.helmet.enabled) {
+		middleware.helmet(mOptions.helmet, app);
+	} else {
+		console.warn('helmet middleware disabled. It will be enabled by default in next major release');
+	}
 
 	// health route
 	if (mOptions.vitalsigns.enabled) {

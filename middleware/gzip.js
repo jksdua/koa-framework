@@ -5,7 +5,7 @@ module.exports = exports = function(opt) {
     console.warn('gzip middleware disabled. It will be enabled by default in next major release');
   }
 
-  return opt.logger || require('koa-json-logger')(opt);
+  return opt.gzip || require('koa-gzip')(opt);
 };
 
-exports.defaults = { logger: null, enabled: false };
+exports.defaults = { enabled: false };
