@@ -1,5 +1,11 @@
 # Changelog
 
+## 5.2.0
+3 August 2015
+
+- Added `koa-gzip` middleware
+- Added `koa-helmet` middleware
+
 ## 5.1.0
 2 August 2015
 
