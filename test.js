@@ -281,6 +281,46 @@ describe('#koa-framework', function() {
 		});
 	});
 
+	describe('#helmet', function() {
+		it('should be disabled by default', function(done) {
+			var app = koa();
+			var p = port();
+
+			app.use(function *() {
+				this.status = 201;
+			}); // jshint ignore:line
+
+			app.listen(p);
+
+			request('http://localhost:' + p, function(err, res) {
+				expect(res.statusCode).to.equal(201);
+				expect(res.headers).to.not.have.property('x-frame-options');
+				done();
+			});
+		});
+
+		it('should enable default helmet middlewares if default is enabled', function(done) {
+			var app = koa({
+				middleware: {
+					helmet: { enabled: true, default: true }
+				}
+			});
+			var p = port();
+
+			app.use(function *() {
+				this.status = 201;
+			}); // jshint ignore:line
+
+			app.listen(p);
+
+			request('http://localhost:' + p, function(err, res) {
+				expect(res.statusCode).to.equal(201);
+				expect(res.headers).to.have.property('x-frame-options');
+				done();
+			});
+		});
+	});
+
 	describe('#vitalsigns', function() {
 		it('should not return vitalsigns by default', function(done) {
 			var app = koa();

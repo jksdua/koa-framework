@@ -32,6 +32,7 @@
     "koa": "^0.21.0",
     "koa-body-parser": "~1.1.0",
     "koa-gzip": "^0.1.0",
+    "koa-helmet": "^0.2.0",
     "koa-json-logger": "0.0.22",
     "koa-no-cache": "^1.1.0",
     "koa-router": "^5.0.1",
