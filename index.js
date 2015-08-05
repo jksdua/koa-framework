@@ -21,7 +21,7 @@ var middleware = {
 	schema: require('./middleware/schema')
 };
 
-module.exports = function(options) {
+module.exports = exports = function(options) {
 	var app = koa();
 
 	app.KF_VERSION = KF_VERSION;
@@ -76,5 +76,11 @@ module.exports = function(options) {
 	// schema validator
 	app.schema = middleware.schema(mOptions.schema, app);
 
+	app.bundledMiddleware = middleware;
+
 	return app;
 };
+
+exports.KF_VERSION = KF_VERSION;
+// expose middleware so it can be used in more flexible ways
+exports.middleware = exports.bundledMiddleware = middleware;

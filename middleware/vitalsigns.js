@@ -1,15 +1,21 @@
 'use strict';
 
+function _vitals() {
+  var Vitalsigns = require('vitalsigns');
+  var vitals = new Vitalsigns();
+
+  // simple monitors
+  vitals.monitor('cpu');
+  vitals.monitor('mem', { units: 'MB' });
+  vitals.monitor('tick');
+  vitals.monitor('uptime');
+
+  return vitals;
+}
+
 module.exports = exports = function(opt, app) {
   if (!opt.vitals) {
-    var Vitalsigns = require('vitalsigns');
-    var vitals = opt.vitals = new Vitalsigns();
-
-    // simple monitors
-    vitals.monitor('cpu');
-    vitals.monitor('mem', { units: 'MB' });
-    vitals.monitor('tick');
-    vitals.monitor('uptime');
+    var vitals = opt.vitals = _vitals();
 
     // { cpu: {...}, mem: {...} }
     for (var monitor in opt.unhealthyWhen) {
@@ -49,3 +55,6 @@ exports.defaults = {
     mem: {}
   }
 };
+
+// expose default vitals instance
+exports.vitals = _vitals;

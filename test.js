@@ -34,7 +34,15 @@ describe('#koa-framework', function() {
 
 	it('should expose the koa-framework version', function() {
 		var app = koa();
+		expect(koa.KF_VERSION).to.be.a('string');
 		expect(app.KF_VERSION).to.be.a('string');
+	});
+
+	it('should expose bundled middleware', function() {
+		var app = koa();
+		expect(koa.middleware).to.be.an('object');
+		expect(app.bundledMiddleware).to.be.an('object');
+		expect(koa.bundledMiddleware).to.be.an('object');
 	});
 
 	describe('#requestId', function() {
@@ -322,6 +330,12 @@ describe('#koa-framework', function() {
 	});
 
 	describe('#vitalsigns', function() {
+		it('should expose default vitals factory', function() {
+			var app = koa();
+			expect(koa.bundledMiddleware.vitalsigns.vitals).to.be.a('function');
+			expect(app.bundledMiddleware.vitalsigns.vitals).to.be.a('function');
+		});
+
 		it('should not return vitalsigns by default', function(done) {
 			var app = koa();
 			var p = port();
