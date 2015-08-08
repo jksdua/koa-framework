@@ -289,6 +289,135 @@ describe('#koa-framework', function() {
 		});
 	});
 
+	describe('#cors', function() {
+		function createApp(port, corsConfig) {
+			let app = koa({
+				middleware: {
+					cors: corsConfig
+				}
+			});
+
+			app.use(function *() {
+				this.status = 206;
+			}); // jshint ignore:line
+
+			app.listen(port);
+			return app;
+		}
+
+		// void 0 is equivalent to same origin request
+		// null is equivalent to file url
+		var tests = [void 0, null, 'google.com', 'jksdua.asia.google.com', 'test.jksdua.asia.google.com', 'jksdua.asia', 'test.jksdua.asia', 'nested.test.jksdua.asia'];
+		var assertions = [
+			{
+				config: {
+					enabled: true,
+					origin: 'test.jksdua.asia'
+				},
+				tests: [true, false, false, false, false, false, true, false]
+			},
+			{
+				config: {
+					enabled: true,
+					origin: 'jksdua.asia'
+				},
+				tests: [true, false, false, false, false, true, false, false]
+			},
+			{
+				config: {
+					enabled: true,
+					origin: /^(.*\.)?jksdua.asia$/
+				},
+				tests: [true, false, false, false, false, true, true, true]
+			},
+			{
+				config: {
+					enabled: true,
+					origin: /^(.*\.)?jksdua.com$/
+				},
+				tests: [true, false, false, false, false, false, false, false]
+			},
+			{
+				config: {
+					enabled: true,
+					origin: [/^(.*\.)?jksdua.asia$/, /^(.*\.)?google.com$/]
+				},
+				tests: [true, false, true, true, true, true, true, true]
+			},
+			{
+				config: {
+					enabled: true,
+					origin: [/^(.*\.)?jksdua.asia$/, 'google.com']
+				},
+				tests: [true, false, true, false, false, true, true, true]
+			},
+			{
+				config: {
+					enabled: true,
+					origin: ['jksdua.asia', 'google.com']
+				},
+				tests: [true, false, true, false, false, true, false, false]
+			}
+		];
+
+		it('should be disabled by default', function(done) {
+			var p = port();
+			createApp(p);
+
+			request({
+				url: 'http://localhost:' + p,
+				method: 'OPTIONS'
+			}, function(err, res) {
+				expect(res.statusCode).to.equal(206);
+				expect(res.headers).to.not.have.property('access-control-allow-origin');
+				done();
+			});
+		});
+
+		assertions.forEach(function(assertion) {
+			var config = assertion.config;
+			var stringifiedConfig = JSON.stringify(config);
+
+			assertion.tests.forEach(function(pass, index) {
+				var origin = tests[index];
+				var p = port();
+				createApp(p, config);
+
+				if ('undefined' === typeof origin) {
+					it('should work for same origin when config is ' + stringifiedConfig, function(done) {
+						request({
+							url: 'http://localhost:' + p
+						}, function(err, res) {
+							// indicates route answered the request instead of the cors middleware
+							expect(res.statusCode).to.equal(206);
+							done();
+						});
+					});
+				} else {
+					it('should assert for ' + origin + ' when config is ' + stringifiedConfig, function(done) {
+						request({
+							url: 'http://localhost:' + p,
+							method: 'OPTIONS',
+							headers: { origin: origin }
+						}, function(err, res) {
+							// indicates route answered the request instead of the cors middleware
+							expect(res.statusCode).to.equal(204);
+
+							var originHeader = res.headers['access-control-allow-origin'];
+							if (pass) {
+								expect(originHeader).to.equal(origin);
+							} else {
+								expect(originHeader).to.not.equal(origin);
+							}
+
+							done();
+						});
+					});
+				}
+			});
+		});
+	});
+
 	describe('#helmet', function() {
 		it('should be disabled by default', function(done) {
 			var app = koa();

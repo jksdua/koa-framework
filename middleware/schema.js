@@ -1,6 +1,6 @@
 'use strict';
 
-var merge = require('lodash.merge');
+var merge = require('lodash').merge;
 var assert = require('assert');
 
 const DEFAULT_ERROR_ENVS = ['development', 'dev', 'test', 'testing'];

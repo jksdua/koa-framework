@@ -5,7 +5,7 @@
 const KF_VERSION = require('./package.json').version;
 
 var koa = require('koa');
-var merge = require('lodash.merge');
+var merge = require('lodash').merge;
 var assert = require('assert');
 var router = require('koa-router');
 
@@ -14,6 +14,7 @@ var middleware = {
 	parse: require('./middleware/parse'),
 	error: require('./middleware/error'),
 	logger: require('./middleware/logger'),
+	cors: require('./middleware/cors'),
 	noCache: require('./middleware/no-cache'),
 	gzip: require('./middleware/gzip'),
 	helmet: require('./middleware/helmet'),
@@ -26,7 +27,7 @@ module.exports = exports = function(options) {
 
 	app.KF_VERSION = KF_VERSION;
 
-	options = merge({
+	options = merge({}, {
 		middleware: Object.keys(middleware).reduce(function(opt, name) {
 			opt[name] = middleware[name].defaults;
 			assert(opt[name]);
@@ -39,7 +40,7 @@ module.exports = exports = function(options) {
 	}, options);
 	var mOptions = options.middleware;
 
-	['requestId', 'gzip', 'logger', 'error', 'noCache', 'parse'].forEach(function(i) {
+	['requestId', 'gzip', 'logger', 'error', 'noCache', 'cors', 'parse'].forEach(function(i) {
 		if (mOptions[i].enabled) {
 			app.use(middleware[i](mOptions[i], app));
 		}
