@@ -1,5 +1,11 @@
 # Changelog
 
+## 5.3.0
+9 August 2015
+
+- [[50902df1](https://github.com/jksdua/koa-framework/commit/50902df18531e086e4dbc10ac9a847d91ac9a7ca)] Exposed middleware so it can be used more flexibly
+- [[26898a80](https://github.com/jksdua/koa-framework/commit/26898a8089ee4b0ead5b136ae7153789edcb7180)] Added `cors` middleware
+
 ## 5.2.0
 3 August 2015
 
