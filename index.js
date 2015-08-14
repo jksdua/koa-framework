@@ -27,6 +27,10 @@ module.exports = exports = function(options) {
 
 	app.KF_VERSION = KF_VERSION;
 
+	// print warning messages to console by default
+		// using `app.warn` allows users to turn this behaviour off by overriding this property
+	app.warn = exports.warn;
+
 	options = merge({}, {
 		middleware: Object.keys(middleware).reduce(function(opt, name) {
 			opt[name] = middleware[name].defaults;
@@ -64,14 +68,14 @@ module.exports = exports = function(options) {
 	if (mOptions.helmet.enabled) {
 		middleware.helmet(mOptions.helmet, app);
 	} else {
-		console.warn('helmet middleware disabled. It will be enabled by default in next major release');
+		app.warn('helmet middleware disabled. It will be enabled by default in next major release');
 	}
 
 	// health route
 	if (mOptions.vitalsigns.enabled) {
 		middleware.vitalsigns(mOptions.vitalsigns, app);
 	} else {
-		console.warn('vitalsigns middleware disabled. It will be enabled by default in next major release');
+		app.warn('vitalsigns middleware disabled. It will be enabled by default in next major release');
 	}
 
 	// schema validator
@@ -83,5 +87,8 @@ module.exports = exports = function(options) {
 };
 
 exports.KF_VERSION = KF_VERSION;
+// global warn method
+	// allows global override for all app instances
+exports.warn = console.warn;
 // expose middleware so it can be used in more flexible ways
 exports.middleware = exports.bundledMiddleware = middleware;

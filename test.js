@@ -13,6 +13,10 @@ describe('#koa-framework', function() {
 
 	var koa = require(__dirname);
 
+	// turn off warnings
+	koa.warn = function() {};
+
+	// port generator
 	var port = (function() {
 		var _id = 3000;
 		return function() {

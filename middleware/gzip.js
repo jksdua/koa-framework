@@ -1,8 +1,8 @@
 'use strict';
 
-module.exports = exports = function(opt) {
+module.exports = exports = function(opt, app) {
   if (!opt.enabled) {
-    console.warn('gzip middleware disabled. It will be enabled by default in next major release');
+    app.warn('gzip middleware disabled. It will be enabled by default in next major release');
   }
 
   return opt.gzip || require('koa-gzip')(opt);

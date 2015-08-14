@@ -24,7 +24,6 @@ var convertTo = {
 function convertOne(item, schema, types) {
   if (schema.type && convertTo[schema.type]) {
     if (!types || types.indexOf(schema.type) > -1) {
-      if (schema.type === 'date') { console.log(new Date(item)); }
       return convertTo[schema.type](item);
     }
   } else if (schema.properties) {
@@ -67,7 +66,7 @@ module.exports = exports = function(globalOpt, app) {
     var parsedSchema;
 
     if (!coerceTypes) {
-      console.warn('coerceTypes will default to true in the next major release');
+      app.warn('coerceTypes will default to true in the next major release');
     }
 
     var baseSchema = {
