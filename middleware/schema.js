@@ -7,6 +7,9 @@ const DEFAULT_ERROR_ENVS = ['development', 'dev', 'test', 'testing'];
 const INVALID_PARAMS_ERROR_MSG = 'Invalid request parameters';
 
 var convertTo = {
+  date: function(d) {
+    return new Date(d);
+  },
   integer: function(n) {
     return parseInt(n, 10);
   },
@@ -18,12 +21,15 @@ var convertTo = {
   }
 };
 
-function convertOne(item, schema) {
+function convertOne(item, schema, types) {
   if (schema.type && convertTo[schema.type]) {
-    return convertTo[schema.type](item);
+    if (!types || types.indexOf(schema.type) > -1) {
+      if (schema.type === 'date') { console.log(new Date(item)); }
+      return convertTo[schema.type](item);
+    }
   } else if (schema.properties) {
     for (var i in schema.properties) {
-      if (item[i]) {
+      if (item && item[i]) {
         item[i] = convertOne(item[i], schema.properties[i]);
       }
     }
@@ -34,6 +40,7 @@ function convertOne(item, schema) {
 function convertStringToType(ctx, schema) {
   ctx.query = convertOne(ctx.query, schema.query || {});
   ctx.params = convertOne(ctx.params, schema.params || {});
+  ctx.request.body = convertOne(ctx.request.body, schema.body || {}, ['date']);
 }
 
 module.exports = exports = function(globalOpt, app) {

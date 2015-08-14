@@ -7,6 +7,8 @@ process.env.NODE_ENV = 'test';
 describe('#koa-framework', function() {
 	var chai = require('chai');
 	var expect = chai.expect;
+	chai.use(require('chai-datetime'));
+
 	var request = require('request');
 
 	var koa = require(__dirname);
@@ -820,6 +822,58 @@ describe('#koa-framework', function() {
 				// should not throw validation error
 				expect(res.statusCode).to.equal(200);
 				expect(res.body.a).to.equal(123.45);
+				done();
+			});
+		});
+
+		it('should work for a date type', function(done) {
+			var a = new Date();
+			var b = new Date();
+
+			var schema = {
+				params: {
+					properties: {
+						a: { type: 'date', required: true },
+						b: { type: 'date', required: false },
+						c: { type: 'date', required: false }
+					}
+				},
+				body: {
+					properties: {
+						a: { type: 'date', required: true },
+						b: { type: 'date', required: false },
+						c: { type: 'date', required: false }
+					}
+				}
+			};
+
+			var p = port();
+			var app = koa();
+
+			var router = app.router();
+			router.post('/a/:a/b/:b', app.schema(schema, { coerceTypes: true }), function *() {
+				function assert(item) {
+					expect(item.a).to.equalDate(a);
+					expect(item.b).to.equalDate(b);
+					expect(item).to.not.have.property('c');
+				}
+
+				assert(this.params);
+				assert(this.request.body);
+
+				this.status = 204;
+			}); // jshint ignore:line
+
+			app.mount(router);
+			app.listen(p);
+
+			request({
+				url: 'http://localhost:' + p + '/a/' + JSON.stringify(a).replace(/"/g, '') + '/b/' + JSON.stringify(b).replace(/"/g, ''),
+				method: 'POST',
+				json: { a: a, b: b }
+			}, function(err, res) {
+				// should not throw validation error
+				expect(res.statusCode).to.equal(204);
 				done();
 			});
 		});
