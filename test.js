@@ -916,6 +916,39 @@ describe('#koa-framework', function() {
 			});
 		});
 
+		it('should work for an object type', function(done) {
+			var schema = {
+				query: {
+					properties: {
+						a: { type: 'object', required: true }
+					}
+				}
+			};
+
+			var p = port();
+			var app = koa();
+
+			var router = app.router();
+			router.post('/', app.schema(schema, { coerceTypes: true }), function *() {
+				this.body = this.query;
+			}); // jshint ignore:line
+
+			app.mount(router);
+			app.listen(p);
+
+      var a = { b: 'c' };
+			request({
+				url: 'http://localhost:' + p + '?a=' + encodeURIComponent(JSON.stringify(a)),
+				method: 'POST',
+				json: true
+			}, function(err, res) {
+				// should not throw validation error
+				expect(res.statusCode).to.equal(200);
+				expect(res.body.a).to.eql({ b: 'c' });
+				done();
+			});
+		});
+
 		it('should work for an integer type if enabled globally', function(done) {
 			var schema = {
 				query: {

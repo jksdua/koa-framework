@@ -18,28 +18,35 @@ var convertTo = {
   },
   boolean: function(b) {
     return 'true' === b;
+  },
+  object: function(o) {
+    return JSON.parse(o);
   }
 };
 
 function convertOne(item, schema, types) {
   if (schema.type && convertTo[schema.type]) {
-    if (!types || types.indexOf(schema.type) > -1) {
+    if ('*' === types || types.indexOf(schema.type) > -1) {
       return convertTo[schema.type](item);
     }
   } else if (schema.properties) {
     for (var i in schema.properties) {
       if (item && item[i]) {
-        item[i] = convertOne(item[i], schema.properties[i]);
+        item[i] = convertOne(item[i], schema.properties[i], types);
       }
     }
   }
+
   return item;
 }
 
 function convertStringToType(ctx, schema) {
-  ctx.query = convertOne(ctx.query, schema.query || {});
-  ctx.params = convertOne(ctx.params, schema.params || {});
+  ctx.params = convertOne(ctx.params, schema.params || {}, '*');
   ctx.request.body = convertOne(ctx.request.body, schema.body || {}, ['date']);
+
+  // there is a setter on ctx.query which doesnt let us directly set the query object
+  let parsedQuery = convertOne(ctx.query, schema.query || {}, '*');
+  merge(ctx.query, parsedQuery);
 }
 
 module.exports = exports = function(globalOpt, app) {
