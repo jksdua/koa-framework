@@ -1,5 +1,11 @@
 # Changelog
 
+## 5.4.0
+22 December 2015
+
+- [[f8f9a274](https://github.com/jksdua/koa-framework/commit/f8f9a27400f35cb9e7e101b3073f09e9f977b4ac)] Allow schema function to optionally return falsy value to skip validation
+- [[7b0567fb](https://github.com/jksdua/koa-framework/commit/7b0567fb80275dacc66ad3130e42d6949cc2562b)] Added schema parser for object types. Now complex query parameters (a.k.a. JSON stringified objects) will be converted to an object automatically
+
 ## 5.3.0
 9 August 2015
 
