@@ -128,22 +128,27 @@ module.exports = exports = function(globalOpt, app) {
         convertStringToType(this, schema);
       }
 
-      var res = validator.validate({
-        body: this.request.body,
-        query: this.query,
-        params: this.params
-      }, getSchema(this), {
-        propertyName: 'request',
-        allowUnknownAttributes: !strict
-      });
+      var requestSchema = getSchema(this);
 
-      if (!res.valid) {
-        var error = new Error(INVALID_PARAMS_ERROR_MSG);
-        error.status = 400;
-        error.details = { validationErrors: displayErrors ? res.errors : null };
-        this.throw(error);
-      } else {
-        yield next;
+      // let fnSchema optionally not return a schema
+      if (requestSchema) {
+        var res = validator.validate({
+          body: this.request.body,
+          query: this.query,
+          params: this.params
+        }, requestSchema, {
+          propertyName: 'request',
+          allowUnknownAttributes: !strict
+        });
+
+        if (!res.valid) {
+          var error = new Error(INVALID_PARAMS_ERROR_MSG);
+          error.status = 400;
+          error.details = { validationErrors: displayErrors ? res.errors : null };
+          this.throw(error);
+        } else {
+          yield next;
+        }
       }
     };
   };
