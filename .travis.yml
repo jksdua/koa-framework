@@ -21,5 +21,4 @@ node_js:
   - "iojs-v3.0"
 os:
   - linux
-  - osx
   - windows
