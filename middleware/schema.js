@@ -76,6 +76,12 @@ module.exports = exports = function(globalOpt, app) {
       app.warn('coerceTypes will default to true in the next major release');
     }
 
+    // add base schemas used for tightening what gets through the request
+    validator.addSchema({}, '@koa-framework/not-strict');
+    validator.addSchema({
+      allowUnknownAttributes: false, additionalProperties: false
+    }, '@koa-framework/strict');
+
     var baseSchema = {
       type: 'object',
       required: true,
@@ -130,7 +136,7 @@ module.exports = exports = function(globalOpt, app) {
 
       var requestSchema = getSchema(this);
 
-      // let fnSchema optionally not return a schema
+      // let fnSchema optionally not return a schema so wrap in if block
       if (requestSchema) {
         var res = validator.validate({
           body: this.request.body,
@@ -138,7 +144,8 @@ module.exports = exports = function(globalOpt, app) {
           params: this.params
         }, requestSchema, {
           propertyName: 'request',
-          allowUnknownAttributes: !strict
+          allowUnknownAttributes: !strict,
+          base: strict ? '@koa-framework/strict' : '@koa-framework/not-strict'
         });
 
         if (!res.valid) {

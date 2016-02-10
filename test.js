@@ -2,7 +2,7 @@
 
 'use strict';
 
-process.env.NODE_ENV = 'test';
+//process.env.NODE_ENV = 'test';
 
 describe('#koa-framework', function() {
 	var chai = require('chai');
@@ -564,6 +564,45 @@ describe('#koa-framework', function() {
 				expect(res.body.error).to.match(/invalid\srequest\sparameters/i);
 				expect(res.body.details.validationErrors).to.have.length(1);
 				expect(res.body.details.validationErrors[0]).to.have.property('stack', 'request.params.a is not one of enum values: a,b,c');
+				done();
+			});
+		});
+
+		it('should throw an error if request contains items not in schema', function(done) {
+			var schema = {
+				params: {
+					properties: {}
+				},
+				query: {
+					properties: {}
+				},
+				body: {
+					properties: {}
+				}
+			};
+
+			var p = port();
+			var app = koa();
+
+			var router = app.router();
+			router.post('/a/:a', app.schema(schema), function *() {
+				this.body = this.request.body;
+			}); // jshint ignore:line
+
+			app.mount(router);
+			app.listen(p);
+
+			request({
+				url: 'http://localhost:' + p + '/a/d?a=1',
+				method: 'POST',
+				json: { a: 1 }
+			}, function(err, res) {
+				expect(res.statusCode).to.equal(400);
+				expect(res.body.error).to.match(/invalid\srequest\sparameters/i);
+				expect(res.body.details.validationErrors).to.have.length(3);
+				expect(res.body.details.validationErrors[0]).to.have.property('stack', 'request.body additionalProperty "a" exists in instance when not allowed');
+				expect(res.body.details.validationErrors[1]).to.have.property('stack', 'request.query additionalProperty "a" exists in instance when not allowed');
+				expect(res.body.details.validationErrors[2]).to.have.property('stack', 'request.params additionalProperty "a" exists in instance when not allowed');
 				done();
 			});
 		});
