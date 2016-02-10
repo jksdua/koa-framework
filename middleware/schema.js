@@ -78,9 +78,7 @@ module.exports = exports = function(globalOpt, app) {
 
     // add base schemas used for tightening what gets through the request
     validator.addSchema({}, '@koa-framework/not-strict');
-    validator.addSchema({
-      allowUnknownAttributes: false, additionalProperties: false
-    }, '@koa-framework/strict');
+    validator.addSchema({ additionalProperties: false }, '@koa-framework/strict');
 
     var baseSchema = {
       type: 'object',
@@ -94,26 +92,17 @@ module.exports = exports = function(globalOpt, app) {
     }
 
     function parseSchema(schema) {
-      var toBeUsed = {
+      return {
         type: 'object',
         required: true,
-        properties: {}
+        properties: {
+          body: merge({}, baseSchema, schema.body),
+          query: merge({}, baseSchema, schema.query),
+          // is an array with object properties
+          params: merge({}, baseSchema, schema.params)
+        },
+        additionalProperties: false
       };
-
-      if (schema.body) {
-        toBeUsed.properties.body = merge({}, baseSchema, schema.body);
-      }
-
-      if (schema.query) {
-        toBeUsed.properties.query = merge({}, baseSchema, schema.query);
-      }
-
-      // is an array with object properties
-      if (schema.params) {
-        toBeUsed.properties.params = merge({}, baseSchema, schema.params);
-      }
-
-      return toBeUsed;
     }
 
     assert(objSchema || fnSchema, 'Missing/invalid schema');
@@ -139,9 +128,9 @@ module.exports = exports = function(globalOpt, app) {
       // let fnSchema optionally not return a schema so wrap in if block
       if (requestSchema) {
         var res = validator.validate({
-          body: this.request.body,
-          query: this.query,
-          params: this.params
+          body: this.request.body || {},
+          query: this.query || {},
+          params: this.params || {}
         }, requestSchema, {
           propertyName: 'request',
           allowUnknownAttributes: !strict,

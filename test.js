@@ -575,9 +575,6 @@ describe('#koa-framework', function() {
 				},
 				query: {
 					properties: {}
-				},
-				body: {
-					properties: {}
 				}
 			};
 
@@ -664,7 +661,7 @@ describe('#koa-framework', function() {
 			request({
 				url: 'http://localhost:' + p + '?a=a',
 				method: 'POST',
-				body: 'a=a&b=123&c=456'
+				form: 'a=a&b=123&c=456'
 			}, function(err, res) {
 				expect(res.statusCode).to.equal(400);
 				done();
