@@ -1,5 +1,11 @@
 # Changelog
 
+## 6.0.0
+10 February 2015
+
+- Breaking change to how schemas are processed
+  - schemas are now restrictive by default due to the base schema passed to `jsonschema` for all objects
+
 ## 5.4.0
 22 December 2015
 
