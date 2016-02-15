@@ -9,7 +9,7 @@ module.exports = exports = function(opt, app) {
   } else {
     for (var i in opt) {
       if (i in helmet) {
-        helmet[i](opt[i]);
+        app.use(helmet[i](opt[i]));
       }
     }
   }
