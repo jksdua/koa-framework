@@ -5,6 +5,11 @@
 
 - Fix bug where helmet was not being used if non-default config was used
 
+## 5.4.1
+15 February 2015
+
+- Fix bug where helmet was not being used if non-default config was used
+
 ## 6.0.0
 10 February 2015
 
