@@ -1,6 +1,6 @@
 {
   "name": "koa-framework",
-  "version": "6.0.0",
+  "version": "6.0.1",
   "description": "Dead simple framework on top of koa",
   "main": "index.js",
   "scripts": {
