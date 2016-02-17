@@ -27,7 +27,11 @@ var convertTo = {
 function convertOne(item, schema, types) {
   if (schema.type && convertTo[schema.type]) {
     if ('*' === types || types.indexOf(schema.type) > -1) {
-      return convertTo[schema.type](item);
+      // only convert if its in string format
+      return ('string' === typeof item ?
+        convertTo[schema.type](item) :
+        item
+      );
     }
   } else if (schema.properties) {
     for (var i in schema.properties) {
