@@ -1,5 +1,17 @@
 # Changelog
 
+## 6.0.2
+17 February 2015
+
+- [[226a954f3](https://github.com/jksdua/koa-framework/commit/226a954f3614b2805cf4812072caa95c3f854a3a)] Fix schema coercion when using `fnSchema`
+- [[32177b926](https://github.com/jksdua/koa-framework/commit/32177b9266ac51d82e1cd68c6af9981f8f1dba60)] Only coerce once when using multiple layers of schema
+
+## 5.4.2
+17 February 2015
+
+- [[226a954f3](https://github.com/jksdua/koa-framework/commit/226a954f3614b2805cf4812072caa95c3f854a3a)] Fix schema coercion when using `fnSchema`
+- [[32177b926](https://github.com/jksdua/koa-framework/commit/32177b9266ac51d82e1cd68c6af9981f8f1dba60)] Only coerce once when using multiple layers of schema
+
 ## 6.0.1
 15 February 2015
 
