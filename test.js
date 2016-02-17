@@ -972,7 +972,7 @@ describe('#koa-framework', function() {
 			app.mount(router);
 			app.listen(p);
 
-      var a = { b: 'c' };
+			var a = { b: 'c' };
 			request({
 				url: 'http://localhost:' + p + '?a=' + encodeURIComponent(JSON.stringify(a)),
 				method: 'POST',
@@ -1053,8 +1053,8 @@ describe('#koa-framework', function() {
 			});
 		});
 
-		it('should support function schema', function(done) {
-			var schema1 = {
+		it('should support multiple schema layers with coerceTypes on', function(done) {
+			var schema = {
 				query: {
 					properties: {
 						a: { type: 'integer', required: true }
@@ -1062,8 +1062,40 @@ describe('#koa-framework', function() {
 				}
 			};
 
-			var schema2 = {
+			var p = port();
+			var app = koa({
+				middleware: {
+					schema: { coerceTypes: true }
+				}
+			});
+
+			var router = app.router();
+			router.post('/', app.schema(schema), app.schema(schema), function *() {
+				this.body = this.query;
+			}); // jshint ignore:line
+
+			app.mount(router);
+			app.listen(p);
+
+			request({
+				url: 'http://localhost:' + p + '?a=1',
+				method: 'POST',
+				json: true
+			}, function(err, res) {
+				// should not throw validation error
+				expect(res.statusCode).to.equal(200);
+				done();
+			});
+		});
+
+		it('should support function schema', function(done) {
+			var schema = {
 				query: {
+					properties: {
+						a: { type: 'integer', required: true }
+					}
+				},
+				params: {
 					properties: {
 						a: { type: 'string', required: true }
 					}
@@ -1071,11 +1103,15 @@ describe('#koa-framework', function() {
 			};
 
 			var p = port();
-			var app = koa();
+			var app = koa({
+				middleware: {
+					schema: { coerceTypes: true }
+				}
+			});
 
 			var router = app.router();
-			router.post('/', app.schema(function() {
-				return schema2;
+			router.post('/a/:a', app.schema(function() {
+				return schema;
 			}), function *() {
 				this.body = this.query;
 			}); // jshint ignore:line
@@ -1084,7 +1120,7 @@ describe('#koa-framework', function() {
 			app.listen(p);
 
 			request({
-				url: 'http://localhost:' + p + '?a=a',
+				url: 'http://localhost:' + p + '/a/a?a=1',
 				method: 'POST',
 				json: true
 			}, function(err, res) {

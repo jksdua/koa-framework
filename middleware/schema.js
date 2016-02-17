@@ -25,13 +25,9 @@ var convertTo = {
 };
 
 function convertOne(item, schema, types) {
-  if (schema.type && convertTo[schema.type]) {
+  if (schema.type && convertTo[schema.type] && 'string' === typeof item) {
     if ('*' === types || types.indexOf(schema.type) > -1) {
-      // only convert if its in string format
-      return ('string' === typeof item ?
-        convertTo[schema.type](item) :
-        item
-      );
+      return convertTo[schema.type](item);
     }
   } else if (schema.properties) {
     for (var i in schema.properties) {
@@ -45,11 +41,11 @@ function convertOne(item, schema, types) {
 }
 
 function convertStringToType(ctx, schema) {
-  ctx.params = convertOne(ctx.params, schema.params || {}, '*');
-  ctx.request.body = convertOne(ctx.request.body, schema.body || {}, ['date']);
+  ctx.params = convertOne(ctx.params, schema.properties.params || {}, '*');
+  ctx.request.body = convertOne(ctx.request.body, schema.properties.body || {}, ['date']);
 
   // there is a setter on ctx.query which doesnt let us directly set the query object
-  let parsedQuery = convertOne(ctx.query, schema.query || {}, '*');
+  let parsedQuery = convertOne(ctx.query, schema.properties.query || {}, '*');
   merge(ctx.query, parsedQuery);
 }
 
@@ -123,14 +119,14 @@ module.exports = exports = function(globalOpt, app) {
     }
 
     return function *(next) {
-      if (coerceTypes) {
-        convertStringToType(this, schema);
-      }
-
       var requestSchema = getSchema(this);
 
       // let fnSchema optionally not return a schema so wrap in if block
       if (requestSchema) {
+        if (coerceTypes) {
+          convertStringToType(this, requestSchema);
+        }
+
         var res = validator.validate({
           body: this.request.body || {},
           query: this.query || {},
