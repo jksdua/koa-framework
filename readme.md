@@ -37,7 +37,7 @@ npm install koa-framework --save
 
 ### Step 2 - Create an app
 
-A koa instance is returned so see [koa documentation](koajs.com) for more details.
+A koa instance is returned so see [koa documentation](http://koajs.com) for more details.
 
 ```javascript
 let koa = require('koa-framework');
