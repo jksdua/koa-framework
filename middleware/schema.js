@@ -134,7 +134,8 @@ module.exports = exports = function(globalOpt, app) {
 
         var res = validator.validate({
           body: this.request.body,
-          query: this.query,
+          // use merge to fix bug where qs.parse uses Object.create(null) and jsonschema checks for instanceof Object in attributes.properties
+          query: merge({}, this.query || {}),
           params: this.params
         }, requestSchema, {
           propertyName: 'request',

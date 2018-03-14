@@ -1,12 +1,11 @@
 {
   "name": "koa-framework",
-  "version": "5.4.2",
+  "version": "5.4.3",
   "description": "Dead simple framework on top of koa",
   "main": "index.js",
   "scripts": {
     "test": "mocha --bail --harmony --reporter spec test.js",
     "test-watch": "nodemon --exec \"npm test\"",
-    "validate": "rm -rf ./node_modules && npm cache clear && npm install",
     "lint": "jshint ."
   },
   "directories": {

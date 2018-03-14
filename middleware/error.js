@@ -4,6 +4,8 @@
  * Based on koa-error
  */
 
+/* jshint ignore:start */
+
 var http = require('http');
 
 var env = process.env.NODE_ENV || 'development';
@@ -33,3 +35,5 @@ module.exports = exports = function(opt) {
 };
 
 exports.defaults = { handler: null, enabled: true };
+
+/* jshint ignore:end */
